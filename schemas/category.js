@@ -13,8 +13,15 @@ var CategorySchema = new Schema({
 		type: Date,
 		default: Date.now
 	},
-	name: String,
-	slug: String,
+	name: {
+		type: String,
+		trim: true
+	},
+	slug: {
+		type: String,
+		lowercase: true,
+		trim: true
+	},
 	products: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Product'
@@ -42,8 +49,7 @@ CategorySchema.pre('save', function(next) {
 	var that = this;
 
 	// that.updated = Date.now;
-	that.name = that.name.trim();
-	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'').toLowerCase();
+	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
 
 	if (!validatePresenceOf(that.slug)) {
 		next(new Error('Category slug is required'));
