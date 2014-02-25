@@ -15,15 +15,15 @@ describe('<Unit Test>', function() {
 	describe('Model Product:', function() {
 		before(function(done) {
 			product_01 = new Product({
-				name: 'Eastern 2014 Griffin 20" Gloss Orange',
+				name: 'Test Product 01',
 				price: 359.99
 			});
 			product_02 = new Product({
-				name: 'Eastern 2014 Griffin 20" Gloss Orange',
+				name: 'Test Product 01',
 				price: 359.99
 			});
 			product_03= new Product({
-				name: 'Jamis Exile Sport 29er 17"',
+				name: 'Test Product 02',
 				price: 584.99
 			});
 

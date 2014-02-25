@@ -1,9 +1,18 @@
 'use strict';
 var mongoose = require('mongoose'),
 	findOrCreate = require('mongoose-findorcreate'),
+	CategorySchema = require('./category'),
 	Schema = mongoose.Schema;
 
 var ProductSchema = new Schema({
+	created: {
+		type: Date,
+		default: Date.now
+	},
+	updated: {
+		type: Date,
+		default: Date.now
+	},
 	name: String,
 	slug: String,
 	price: Number
@@ -28,6 +37,7 @@ ProductSchema.pre('save', function(next) {
 
 	var that = this;
 
+	// that.updated = Date.now;
 	that.name = that.name.trim();
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'').toLowerCase();
 

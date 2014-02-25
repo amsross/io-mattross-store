@@ -11,7 +11,6 @@ module.exports = function (db) {
 		MongoStore = require('connect-mongo')(express),
 		path = require('path'),
 		products = require('./routes/products'),
-		ProductSchema = require('./schemas/product'),
 		routes = require('./routes'),
 		app = express()
 		;
