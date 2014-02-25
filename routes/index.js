@@ -2,6 +2,7 @@
  * Module dependencies
  */
 var ProductSchema = require('../schemas/product'),
+	CategorySchema = require('../schemas/category'),
 	ObjectId = require('mongoose').Types.ObjectId;
 
 /*
@@ -10,10 +11,11 @@ var ProductSchema = require('../schemas/product'),
 exports.index = function(req, res){
 	'use strict';
 
-	var query = ProductSchema.find();
-
-	query.limit(4)
-		.exec(function(err, products) {
+	CategorySchema
+		.find()
+		.populate('products')
+		.limit(4)
+		.exec(function(err, categories) {
 			if (err) {
 				console.log(err);
 				res.status(500).json({
@@ -21,12 +23,27 @@ exports.index = function(req, res){
 					error: err
 				});
 			} else {
-				res.render('index', {
-					title: 'Home &raquo',
-					env: req.NODE_ENV,
-					menu: 'home',
-					products: products
-				});
+
+				ProductSchema
+					.find()
+					.limit(4)
+					.exec(function(err, products) {
+						if (err) {
+							console.log(err);
+							res.status(500).json({
+								status: 'failure',
+								error: err
+							});
+						} else {
+							res.render('index', {
+								title: 'Home &raquo',
+								env: req.NODE_ENV,
+								menu: 'home',
+								products: products,
+								categories: categories
+							});
+						}
+					});
 			}
 		});
 };

@@ -1,0 +1,25 @@
+if category
+	.category
+		.col-xs-12.col-md-7.image
+			img.img-responsive(src='http://placehold.it/500&text=' + category.name)
+		.col-xs-12.col-md-5.info(id='category_' + category._id)
+			.col-xs-12
+				h2(contenteditable, data-name='category[name]')= category.name
+			form.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), data-source='#category_' + category._id)
+				if products
+					each product in products
+						label.col-sm-6
+							if (_.pluck(category.products, 'slug').indexOf(product.slug) !== -1)
+								input(type='checkbox', name='category[products][]', value=product._id, checked)
+								small= product.name
+							else
+								input(type='checkbox', name='category[products][]', value=product._id)
+								small= product.name
+				input(type='hidden', name='category[name]', value=category.name)
+				.row
+					.col-sm-4
+						button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+					.col-sm-4
+						button.btn.btn-block.btn-warning(name='_method', value='PUT') update
+					.col-sm-4
+						button.btn.btn-block.btn-primary(name='_method', value='POST') create

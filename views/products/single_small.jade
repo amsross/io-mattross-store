@@ -1,0 +1,9 @@
+if product
+	a(href="/products/" + product.slug)
+		.well
+			p.name
+				= product.name
+			p.image
+				img.img-responsive(src="http://placehold.it/500&text=" + product.name)
+			p.price
+				= product.price

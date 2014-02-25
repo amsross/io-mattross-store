@@ -11,6 +11,7 @@ module.exports = function (db) {
 		MongoStore = require('connect-mongo')(express),
 		path = require('path'),
 		products = require('./routes/products'),
+		categories = require('./routes/categories'),
 		routes = require('./routes'),
 		app = express()
 		;
@@ -49,6 +50,8 @@ module.exports = function (db) {
 		app.use(express.static(path.join(__dirname, 'public')));
 	});
 
+	app.locals._ = require('underscore');
+
 	app.get('/', routes.index);
 
 	app.delete('/products/:slug', products.delete);
@@ -56,6 +59,12 @@ module.exports = function (db) {
 	app.get('/products/?:slug', products.get);
 	app.post('/products/?', products.post);
 	app.put('/products/:slug', products.put);
+
+	app.delete('/categories/:slug', categories.delete);
+	app.get('/categories/new/?', categories.new);
+	app.get('/categories/?:slug', categories.get);
+	app.post('/categories/?', categories.post);
+	app.put('/categories/:slug', categories.put);
 
 	return app;
 };
