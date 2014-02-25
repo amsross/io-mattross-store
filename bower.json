@@ -1,0 +1,24 @@
+{
+  "name": "io-mattross-store",
+  "version": "0.0.1",
+  "authors": [
+    "Matt Ross"
+  ],
+  "main": "server.js",
+  "keywords": [],
+  "license": "MIT",
+  "homepage": "http://store.mattross.io/",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.0.3",
+    "jquery": "~2.1.0",
+    "momentjs": "~2.5.1"
+  }
+}

@@ -1,0 +1,7 @@
+*.log
+*.min.*
+*_log
+.env
+bower_components
+node_modules
+Thumbs.db
