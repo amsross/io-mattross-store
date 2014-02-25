@@ -147,7 +147,7 @@ module.exports = function(grunt) {
 				src : '.env',
 				options : {
 					replace : {
-						NODE_ENV : 'development'
+						NODE_ENV : 'test'
 					}
 				}
 			}
@@ -173,6 +173,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-env');
+	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-nodemon');
 
 	//Making grunt default to force in order not to break the project.
@@ -198,5 +199,6 @@ module.exports = function(grunt) {
 	//Test task.
 	grunt.registerTask('test', [
 		'env:test',
+		'mochaTest'
 	]);
 };

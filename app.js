@@ -1,15 +1,20 @@
 
-module.exports = function () {
+module.exports = function (db) {
 	'use strict';
 
 	/**
 	 * Module dependencies.
 	 */
-	var express = require('express'),
-		path = require('path'),
+	var
+		express = require('express'),
 		flash = require('connect-flash'),
+		MongoStore = require('connect-mongo')(express),
+		path = require('path'),
+		products = require('./routes/products'),
+		ProductSchema = require('./schemas/product'),
 		routes = require('./routes'),
-		app = express();
+		app = express()
+		;
 
 	// production only
 	if ('production' === app.get('env')) {
@@ -46,6 +51,11 @@ module.exports = function () {
 	});
 
 	app.get('/', routes.index);
+
+	app.delete('/products/:_id', products.delete);
+	app.get('/products/?', products.get);
+	app.post('/products/?', products.post);
+	app.put('/products/:_id', products.put);
 
 	return app;
 };

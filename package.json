@@ -21,6 +21,7 @@
     "bower": "~1.2.8",
     "cheerio": "~0.13.1",
     "connect-flash": "~0.1.1",
+    "connect-mongo": "~0.4.0",
     "express": "3.4.8",
     "grunt": "~0.4.2",
     "grunt-cli": "~0.1.13",
@@ -35,9 +36,15 @@
     "jade": "*",
     "marked": "~0.3.0",
     "moment": "~2.5.1",
+    "mongoose": "~3.8.8",
+    "mongoose-findorcreate": "~0.1.2",
     "request": "~2.33.0",
     "underscore": "~1.5.2"
   },
   "devDependencies": {
+    "grunt-mocha-test": "~0.9.3",
+    "mocha": "~1.17.1",
+    "should": "~3.1.3",
+    "supertest": "~0.9.0"
   }
 }

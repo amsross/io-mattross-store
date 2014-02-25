@@ -1,5 +1,6 @@
 var http = require('http'),
-	app = require('./app')();
+	db = require('./db'),
+	app = require('./app')(db);
 
 http.createServer(app).listen(app.get('port'), function(){
 	'use strict';

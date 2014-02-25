@@ -1,0 +1,8 @@
+extends ../layouts/default
+
+block content
+	if products
+		each product, index in products
+			div.product.col-xs-12.col-sm-6.col-md-4.margin-bottom
+				h4= product.name
+				h4= product.price
