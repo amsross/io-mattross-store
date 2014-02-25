@@ -1,9 +1,12 @@
-.row
-	.col-xs-12.col-sm-6.col-md-3
-		.well product
-	.col-xs-12.col-sm-6.col-md-3
-		.well product
-	.col-xs-12.col-sm-6.col-md-3
-		.well product
-	.col-xs-12.col-sm-6.col-md-3
-		.well product
+if products
+	.text-center
+		each product, index in products
+			.col-xs-12.col-sm-6.col-md-3
+				.well
+					p.name
+						a(href="/products/" + product.slug)= product.name
+					p.image
+						a(href="/products/" + product.slug)
+							img.img-responsive(src="http://placehold.it/500&text=" + product.name)
+					p.price
+						a(href="/products/" + product.slug)= product.price

@@ -52,10 +52,11 @@ module.exports = function (db) {
 
 	app.get('/', routes.index);
 
-	app.delete('/products/:_id', products.delete);
-	app.get('/products/?', products.get);
+	app.delete('/products/:slug', products.delete);
+	app.get('/products/new/?', products.new);
+	app.get('/products/?:slug', products.get);
 	app.post('/products/?', products.post);
-	app.put('/products/:_id', products.put);
+	app.put('/products/:slug', products.put);
 
 	return app;
 };

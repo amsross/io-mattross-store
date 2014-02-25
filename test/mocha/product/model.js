@@ -15,16 +15,16 @@ describe('<Unit Test>', function() {
 	describe('Model Product:', function() {
 		before(function(done) {
 			product_01 = new Product({
-				name: 'Bike',
-				price: 10.49
+				name: 'Eastern 2014 Griffin 20" Gloss Orange',
+				price: 359.99
 			});
 			product_02 = new Product({
-				name: 'Bike',
-				price: 10.49
+				name: 'Eastern 2014 Griffin 20" Gloss Orange',
+				price: 359.99
 			});
 			product_03= new Product({
-				name: 'Skateboard',
-				price: 4.99
+				name: 'Jamis Exile Sport 29er 17"',
+				price: 584.99
 			});
 
 			done();
@@ -39,7 +39,7 @@ describe('<Unit Test>', function() {
 				});
 			});
 
-			it('should fail to save an product with an existing name', function(done) {
+			it('should fail to save an product with an existing slug', function(done) {
 				return product_02.save(function(err) {
 					should.exist(err);
 					done();
@@ -64,7 +64,9 @@ describe('<Unit Test>', function() {
 		});
 
 		after(function(done) {
-			Product.remove().exec();
+			product_01.remove();
+			product_02.remove();
+			product_03.remove();
 			done();
 		});
 	});

@@ -1,4 +1,4 @@
-/*global $, moment*/
+/*global $, _, moment*/
 'use strict';
 
 // Modified http://paulirish.com/2009/markup-based-unobtrusive-comprehensive-dom-ready-execution/
@@ -12,6 +12,26 @@ var io_mattross_store = {
 	},
 	index: {
 		init: function() {}
+	},
+	products_edit: {
+		init: function() {
+			$('form').submit( function() {
+
+				var that = this,
+					source = $($(that).data('source')),
+					inputs = source.find('[contenteditable]'),
+					input_name = '',
+					input_text = '';
+
+				_.each(inputs, function(input){
+					input_name = $(input).data('name');
+					input_text = $(input).text();
+					$(that).find('[name="' + input_name + '"]').val(input_text);
+				});
+
+				that.submit();
+			});
+		}
 	}
 };
 

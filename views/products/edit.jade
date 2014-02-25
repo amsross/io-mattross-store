@@ -1,0 +1,50 @@
+extends ../layouts/default
+
+block content
+	if product
+		div.product
+			.col-xs-12.col-md-7.image
+				img.img-responsive(src='http://placehold.it/500&text=' + product.name)
+			.col-xs-12.col-md-5.info(id='product_' + product._id)
+				.col-xs-12
+					h2(contenteditable, data-name='product[name]')= product.name
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Price
+					.col-xs-6 $
+						span(contenteditable, data-name='product[price]')= product.price
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Brand:
+					.col-xs-6
+						span(contenteditable, data-name='product[brand]')= product.brand
+				.col-xs-12.col-md-6.row
+					.col-xs-6. SKU:
+					.col-xs-6
+						span(contenteditable, data-name='product[sku]')= product.sku
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Stock:
+					.col-xs-6
+						span(contenteditable, data-name='product[stock]')= product.stock
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Rating:
+					.col-xs-6. xxx
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Shippable:
+					.col-xs-6
+						span(contenteditable, data-name='product[shipping]')= product.shipping
+				.col-xs-12.col-md-6.row
+					.col-xs-6. Quantity:
+					.col-xs-6
+						span(contenteditable, data-name='product[quantity]')= product.quantity
+				.col-xs-12.col-md-6.row
+					.col-xs-12
+						a(href='javascript:;') Write a Review
+
+				form.col-sm-12.row(method='POST', action='/products/' + (product.slug || ''), data-source='#product_' + product._id)
+					input(type='hidden', name='product[name]', value=product.name)
+					input(type='hidden', name='product[price]', value=product.price)
+					div.col-sm-4
+						button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+					div.col-sm-4
+						button.btn.btn-block.btn-warning(name='_method', value='PUT') update
+					div.col-sm-4
+						button.btn.btn-block.btn-primary(name='_method', value='POST') create
