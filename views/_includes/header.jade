@@ -4,8 +4,10 @@ header.row.margin-top
 			.well.well-sm brand
 	.col-xs-12.col-md-6.text-right
 		ul.nav.nav-pills
-			li
-				a(href='/cart') cart
+			if site_parts && site_parts.cart && site_parts.cart.total
+				li.pull-right
+					a(href='/cart').label.label-primary
+						= '$' + site_parts.cart.total
 	.col-xs-12
 		.navbar.navbar-default.navbar-static-top(role='navigation')
 			ul.nav.navbar-nav

@@ -7,7 +7,7 @@ block content
 				tr.item
 					td.col-xs-2
 						a(href='/products/' + product.slug)
-							img.img-responsive(src='http://placehold.it/500&text=' + product.name)
+							img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
 						br
 					td.col-xs-5
 						a(href='/products/' + product.slug)= product.name
@@ -17,6 +17,7 @@ block content
 						= product.qty
 					td.col-xs-2 $
 						= Math.ceil((product.price * product.qty) * 100) / 100
+						a.close(href='/cart/remove/' + product._id) &times;
 			tr
 				td(colspan='5')
 					h3.text-right

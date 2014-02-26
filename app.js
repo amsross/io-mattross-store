@@ -79,23 +79,39 @@ module.exports = function (db) {
 			});
 	};
 
-	app.get('/', site_parts.categories, routes.index);
+	site_parts.cart = function (req, res, next) {
+		req.site_parts = req.site_parts||{};
 
-	app.delete('/products/:slug', site_parts.categories, products.delete);
-	app.get('/products/new/?', site_parts.categories, products.new);
-	app.get('/products/?:slug', site_parts.categories, products.get);
-	app.post('/products/?', site_parts.categories, products.post);
-	app.put('/products/:slug', site_parts.categories, products.put);
+		req.site_parts.cart = {
+			items: [],
+			total: 0.00
+		};
 
-	app.delete('/categories/:slug', site_parts.categories, categories.delete);
-	app.get('/categories/new/?', site_parts.categories, categories.new);
-	app.get('/categories/?:slug', site_parts.categories, categories.get);
-	app.post('/categories/?', site_parts.categories, categories.post);
-	app.put('/categories/:slug', site_parts.categories, categories.put);
+		for (var item in req.session.cart) {
+			req.site_parts.cart.items.push(item);
+			req.site_parts.cart.total += (req.session.cart[item].qty * req.session.cart[item].price);
+		}
+		next();
+	};
 
-	app.get('/cart/?', site_parts.categories, cart.get);
-	app.get('/cart/add/?:_id', site_parts.categories, cart.post);
-	app.post('/cart/?:_id', site_parts.categories, cart.post);
+	app.get('/', site_parts.categories, site_parts.cart, routes.index);
+
+	app.delete('/products/:slug', site_parts.categories, site_parts.cart, products.delete);
+	app.get('/products/new/?', site_parts.categories, site_parts.cart, products.new);
+	app.get('/products/?:slug', site_parts.categories, site_parts.cart, products.get);
+	app.post('/products/?', site_parts.categories, site_parts.cart, products.post);
+	app.put('/products/:slug', site_parts.categories, site_parts.cart, products.put);
+
+	app.delete('/categories/:slug', site_parts.categories, site_parts.cart, categories.delete);
+	app.get('/categories/new/?', site_parts.categories, site_parts.cart, categories.new);
+	app.get('/categories/?:slug', site_parts.categories, site_parts.cart, categories.get);
+	app.post('/categories/?', site_parts.categories, site_parts.cart, categories.post);
+	app.put('/categories/:slug', site_parts.categories, site_parts.cart, categories.put);
+
+	app.get('/cart/?', site_parts.categories, site_parts.cart, cart.get);
+	app.get('/cart/add/?:_id', site_parts.categories, site_parts.cart, cart.add);
+	app.get('/cart/remove/?:_id', site_parts.categories, site_parts.cart, cart.remove);
+	// app.post('/cart/?:_id', site_parts.categories, site_parts.cart, cart.post);
 
 	return app;
 };
