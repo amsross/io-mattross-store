@@ -4,7 +4,7 @@ if product
 			input(type='hidden', name='product[name]', value=product.name)
 			input(type='hidden', name='product[price]', value=product.price)
 			.col-xs-12.col-md-5.image
-				img.img-responsive(src='http://placehold.it/500&text=' + product.name)
+				img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
 			.col-xs-12.col-md-7.info
 				.row
 					.col-xs-12

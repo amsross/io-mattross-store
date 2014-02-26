@@ -4,7 +4,7 @@ if category
 			.row
 				input(type='hidden', name='category[name]', value=category.name)
 				.col-xs-12.col-md-5.image
-					img.img-responsive(src='http://placehold.it/500&text=' + category.name)
+					img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + category.name)
 				.col-xs-12.col-md-7.info(id='category_' + category._id)
 					.col-xs-12
 						h2(contenteditable, data-name='category[name]')= category.name
