@@ -26,6 +26,10 @@ var ProductSchema = new Schema({
 	price: Number
 });
 
+ProductSchema.methods.prettyPrice = function () {
+	return '$' + this.price.toFixed(2);
+};
+
 ProductSchema.plugin(findOrCreate);
 
 /**

@@ -10,8 +10,9 @@ module.exports = function (db) {
 		flash = require('connect-flash'),
 		MongoStore = require('connect-mongo')(express),
 		path = require('path'),
-		products = require('./routes/products'),
+		cart = require('./routes/cart'),
 		categories = require('./routes/categories'),
+		products = require('./routes/products'),
 		routes = require('./routes'),
 		app = express()
 		;
@@ -36,13 +37,15 @@ module.exports = function (db) {
 		app.use(express.cookieParser());
 		app.use(express.session({secret: 'sdfwef234f2e2f24fkhdlkj238'}));
 		app.use(flash());
+		// app.use(express.csrf());
 		app.use(express.favicon());
-		app.use(express.logger('dev'));
 		app.use(express.json());
-		app.use(express.urlencoded());
+		app.use(express.logger('dev'));
 		app.use(express.methodOverride());
+		app.use(express.urlencoded());
 		app.use(function (req, res, next) {
 			res.set('X-Powered-By', 'mattross.io');
+
 			// make the environment name available in routes, etc
 			req.NODE_ENV = app.get('env');
 			next();
@@ -66,6 +69,10 @@ module.exports = function (db) {
 	app.get('/categories/?:slug', categories.get);
 	app.post('/categories/?', categories.post);
 	app.put('/categories/:slug', categories.put);
+
+	app.get('/cart/?', cart.get);
+	app.get('/cart/add/?:_id', cart.post);
+	app.post('/cart/?:_id', cart.post);
 
 	return app;
 };

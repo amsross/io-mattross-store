@@ -44,6 +44,9 @@ if product
 				.col-sm-4
 					button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
 				.col-sm-4
-					button.btn.btn-block.btn-warning(name='_method', value='PUT') update
+					if product.isNew
+						button.btn.btn-block.btn-info(name='_method', value='POST') create
+					else
+						button.btn.btn-block.btn-info(name='_method', value='PUT') update
 				.col-sm-4
-					button.btn.btn-block.btn-primary(name='_method', value='POST') create
+						a.btn.btn-block.btn-primary(href='/cart/add/' + product._id) add to cart

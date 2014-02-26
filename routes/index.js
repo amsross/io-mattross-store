@@ -36,8 +36,9 @@ exports.index = function(req, res){
 							});
 						} else {
 							res.render('index', {
-								title: 'Home &raquo',
+								flashes: req.flash(),
 								env: req.NODE_ENV,
+								title: 'Home &raquo',
 								menu: 'home',
 								products: products,
 								categories: categories

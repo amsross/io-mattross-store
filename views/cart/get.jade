@@ -1,0 +1,32 @@
+extends ../_layouts/default
+
+block content
+	if cart
+		.well
+			ul.items.list-unstyled
+				each product in cart.items
+					li.item.row
+						.col-xs-2
+							a(href="/products/" + product.slug)
+								img.img-responsive(src="http://placehold.it/500&text=" + product.name)
+							br
+						.col-xs-5
+							a(href="/products/" + product.slug)= product.name
+						.col-xs-2
+							= product.prettyPrice
+						.col-xs-1
+							= product.qty
+						.col-xs-2
+							= product.prettyPrice
+		h3
+			| Total: $
+			= cart.total
+
+		//- form(method='POST', action='/pay')
+		//- 	input(name='cc', placeholder='CC #', value='4532649989162709', maxlength='16')
+		//- 	input(name='expMonth', placeholder='MM', value='12', maxlength='2', size='2')
+		//- 	input(name='expYear', placeholder='YYYY', value='2018', maxlength='4', size='4')
+		//- 	input(name='cvv', placeholder='cvv', value='111', maxlength='4', size='4')
+		//- 	input(name='firstName', value='Ash', placeholder='First Name')
+		//- 	input(name='lastName', value='Williams', placeholder='Last Name')
+		//- 	input(type='submit', value='Complete Purchase')
