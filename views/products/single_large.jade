@@ -1,52 +1,53 @@
 if product
 	.product.product--large
-		form.contenteditable.col-sm-12.row(method='POST', action='/products/' + (product.slug || ''))
-			input(type='hidden', name='product[name]', value=product.name)
-			input(type='hidden', name='product[price]', value=product.price)
-			.col-xs-12.col-md-5.image
-				img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
-			.col-xs-12.col-md-7.info
-				.row
-					.col-xs-12
-						h2(contenteditable, data-name='product[name]')= product.name
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Price
-						.col-xs-7(contenteditable, data-name='product[price]')= product.price
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Brand:
-						.col-xs-7(contenteditable, data-name='product[brand]')= product.brand
-					.col-xs-12.col-md-6.row
-						.col-xs-5. SKU:
-						.col-xs-7(contenteditable, data-name='product[sku]')= product.sku
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Stock:
-						.col-xs-7(contenteditable, data-name='product[stock]')= product.stock
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Rating:
-						.col-xs-7(contenteditable, data-name='product[rating]')= xxx
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Shippable:
-						.col-xs-7(contenteditable, data-name='product[shipping]')= product.shipping
-					.col-xs-12.col-md-6.row
-						.col-xs-5. Quantity:
-						.col-xs-7(contenteditable, data-name='product[quantity]')= product.quantity
-					.col-xs-12.col-md-6.row
+		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''))
+			.row
+				input(type='hidden', name='product[name]', value=product.name)
+				input(type='hidden', name='product[price]', value=product.price)
+				.col-xs-12.col-md-5.image
+					img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
+				.col-xs-12.col-md-7.info
+					.row
 						.col-xs-12
-							a(href='javascript:;') Write a Review
-				.row
-					label.col-sm-6
-						if (product.isFeatured === true)
-							input(type='checkbox', name='product[isFeatured]', value='true', checked)
-						else
-							input(type='checkbox', name='product[isFeatured]', value='true')
-						small  Featured
-				.row
-					.col-sm-4
-						button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
-					.col-sm-4
-						if product.isNew
-							button.btn.btn-block.btn-info(name='_method', value='POST') create
-						else
-							button.btn.btn-block.btn-info(name='_method', value='PUT') update
-					.col-sm-4
-							a.btn.btn-block.btn-primary(href='/cart/add/' + product._id) add to cart
+							h2(contenteditable, data-name='product[name]')= product.name
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Price
+							.col-xs-7(contenteditable, data-name='product[price]')= product.price
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Brand:
+							.col-xs-7(contenteditable, data-name='product[brand]')= product.brand
+						.col-xs-12.col-md-6.row
+							.col-xs-5. SKU:
+							.col-xs-7(contenteditable, data-name='product[sku]')= product.sku
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Stock:
+							.col-xs-7(contenteditable, data-name='product[stock]')= product.stock
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Rating:
+							.col-xs-7(contenteditable, data-name='product[rating]')= xxx
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Shippable:
+							.col-xs-7(contenteditable, data-name='product[shipping]')= product.shipping
+						.col-xs-12.col-md-6.row
+							.col-xs-5. Quantity:
+							.col-xs-7(contenteditable, data-name='product[quantity]')= product.quantity
+						.col-xs-12.col-md-6.row
+							.col-xs-12
+								a(href='javascript:;') Write a Review
+					.row
+						label.col-sm-6
+							if (product.isFeatured === true)
+								input(type='checkbox', name='product[isFeatured]', value='true', checked)
+							else
+								input(type='checkbox', name='product[isFeatured]', value='true')
+							small  Featured
+					.row
+						.col-sm-4
+							button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+						.col-sm-4
+							if product.isNew
+								button.btn.btn-block.btn-info(name='_method', value='POST') create
+							else
+								button.btn.btn-block.btn-info(name='_method', value='PUT') update
+						.col-sm-4
+								a.btn.btn-block.btn-primary(href='/cart/add/' + product._id) add to cart
