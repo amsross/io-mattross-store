@@ -2,7 +2,6 @@
  * Module dependencies
  */
 var ProductSchema = require('../schemas/product'),
-	ObjectId = require('mongoose').Types.ObjectId,
 	_ = require('underscore');
 
 /*

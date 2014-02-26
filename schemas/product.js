@@ -28,7 +28,11 @@ var ProductSchema = new Schema({
 	categories: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Category'
-	}]
+	}],
+	isFeatured: {
+		type: Boolean,
+		default: false
+	}
 });
 
 ProductSchema.methods.prettyPrice = function(price) {
@@ -64,18 +68,19 @@ ProductSchema.pre('save', function(next) {
 	if (!validateSlug(that.slug)) {
 		next(new Error('Product slug is required'));
 	} else {
-		mongoose.model('Product', ProductSchema).find({slug: that.slug}, function (err, products) {
-			if (that.isNew && products.length) {
-				next(new Error('Product slug already exists'));
-			}
-			if (!validateName(that.name)) {
-				next(new Error('Product name is required'));
-			}
-			if (!validatePrice(that.price)) {
-				next(new Error('Product price is required'));
-			}
-			next();
-		});
+		mongoose.model('Product', ProductSchema)
+			.find({slug: that.slug}, function (err, products) {
+				if (that.isNew && products.length) {
+					next(new Error('Product slug already exists'));
+				}
+				if (!validateName(that.name)) {
+					next(new Error('Product name is required'));
+				}
+				if (!validatePrice(that.price)) {
+					next(new Error('Product price is required'));
+				}
+				next();
+			});
 	}
 });
 

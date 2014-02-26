@@ -35,7 +35,11 @@ var CategorySchema = new Schema({
 	sub_categories: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Category'
-	}]
+	}],
+	isTopLevel: {
+		type: Boolean,
+		default: false
+	}
 });
 
 CategorySchema.plugin(findOrCreate);

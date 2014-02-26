@@ -1,8 +1,10 @@
 /*
  * Module dependencies
  */
-var CategorySchema = require('../schemas/category'),
-	ObjectId = require('mongoose').Types.ObjectId,
+var mongoose = require('mongoose'),
+	Schema = mongoose.Schema,
+	CategorySchema = require('../schemas/category'),
+	ProductSchema = require('../schemas/product'),
 	_ = require('underscore');
 
 /*
@@ -140,6 +142,38 @@ exports.put = function(req, res){
 							error: err
 						});
 					} else {
+
+						// remove this category from any products no longer in the category.products array
+						ProductSchema
+							.find({categories: { '$in' : [category._id]}}, function (err, products) {
+								if (err) {
+									console.log(err);
+									res.status(500).render('500', {
+										env: req.NODE_ENV,
+										title: '500',
+										status: 'internal failure',
+										error: err
+									});
+								} else if (products) {
+									_.each(products, function(product) {
+										if ((category.products||[]).indexOf(product._id) === -1) {
+											product.categories.remove(category);
+											product.save();
+										}
+									});
+								}
+							});
+
+						// add this category to any products now in the category.products array
+						category.populate('products', function(err, category) {
+							_.each(category.products, function(product) {
+								if ((product.categories||[]).indexOf(category._id) === -1) {
+									product.categories.push(category);
+									product.save();
+								}
+							});
+						});
+
 						req.flash('success', 'Resource updated');
 						res.redirect('/categories/' + category.slug);
 					}
