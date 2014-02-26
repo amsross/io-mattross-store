@@ -37,6 +37,7 @@ exports.get = function(req, res){
 	};
 
 	res.render('cart/get', {
+		site_parts: req.site_parts,
 		flashes: req.flash(),
 		env: req.NODE_ENV,
 		title: 'Products',
@@ -85,6 +86,8 @@ exports.post = function(req, res){
 		});
 	} else {
 		res.status(500).render('500', {
+			site_parts: req.site_parts,
+			flashes: req.flash(),
 			env: req.NODE_ENV,
 			title: '500',
 			status: 'Resource not provided',

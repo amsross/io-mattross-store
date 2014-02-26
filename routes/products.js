@@ -34,8 +34,12 @@ exports.get = function(req, res){
 	record = ProductSchema.findOne({'slug': param_slug}, function (err, product) {
 		if (err) {
 			console.log(err);
-			res.status(500).json({
-				status: 'failure',
+			res.status(500).render({
+				site_parts: req.site_parts,
+				flashes: req.flash(),
+				env: req.NODE_ENV,
+				title: '500',
+				status: 'internal failure',
 				error: err
 			});
 		} else if (product) {
@@ -49,6 +53,8 @@ exports.get = function(req, res){
 			});
 		} else {
 			res.status(404).render('404', {
+				site_parts: req.site_parts,
+				flashes: req.flash(),
 				env: req.NODE_ENV,
 				title: '404',
 				status: 'The specified resource could not be found'
@@ -76,6 +82,8 @@ exports.post = function(req, res){
 			if (err) {
 				console.log(err);
 				res.status(500).render('500', {
+					site_parts: req.site_parts,
+					flashes: req.flash(),
 					env: req.NODE_ENV,
 					title: '500',
 					status: 'internal failure',
@@ -88,6 +96,8 @@ exports.post = function(req, res){
 		});
 	} else {
 		res.status(500).render('500', {
+			site_parts: req.site_parts,
+			flashes: req.flash(),
 			env: req.NODE_ENV,
 			title: '500',
 			status: 'Resource not provided',
@@ -111,6 +121,8 @@ exports.put = function(req, res){
 			if (err) {
 				console.log(err);
 				res.status(500).render('500', {
+					site_parts: req.site_parts,
+					flashes: req.flash(),
 					env: req.NODE_ENV,
 					title: '500',
 					status: 'internal failure',
@@ -125,6 +137,8 @@ exports.put = function(req, res){
 					if (err) {
 						console.log(err);
 						res.status(500).render('500', {
+							site_parts: req.site_parts,
+							flashes: req.flash(),
 							env: req.NODE_ENV,
 							title: '500',
 							status: 'internal failure',
@@ -137,14 +151,19 @@ exports.put = function(req, res){
 				});
 			} else {
 				res.status(404).render('404', {
+					site_parts: req.site_parts,
+					flashes: req.flash(),
 					env: req.NODE_ENV,
 					title: '404',
-					status: 'The specified resource could not be found'
+					status: 'The specified resource could not be found',
+					error: null
 				});
 			}
 		});
 	} else {
 		res.status(500).render('500', {
+			site_parts: req.site_parts,
+			flashes: req.flash(),
 			env: req.NODE_ENV,
 			title: '500',
 			status: 'Resource not provided',
@@ -163,16 +182,24 @@ exports.delete = function(req, res){
 		record = ProductSchema.findOne({ 'slug': param_slug }, function (err, product) {
 			if (err) {
 				console.log(err);
-				res.status(500).json({
-					status: 'failure',
+				res.status(500).render({
+					site_parts: req.site_parts,
+					flashes: req.flash(),
+					env: req.NODE_ENV,
+					title: '500',
+					status: 'internal failure',
 					error: err
 				});
 			} else if (product) {
 				product.remove(function (err, product) {
 					if (err) {
 						console.log(err);
-						res.status(500).json({
-							status: 'failure',
+						res.status(500).render({
+							site_parts: req.site_parts,
+							flashes: req.flash(),
+							env: req.NODE_ENV,
+							title: '500',
+							status: 'internal failure',
 							error: err
 						});
 					} else {
@@ -181,7 +208,14 @@ exports.delete = function(req, res){
 					}
 				});
 			} else {
-				res.status(404).json({status: 'not found'});
+				res.status(404).render('404', {
+					site_parts: req.site_parts,
+					flashes: req.flash(),
+					env: req.NODE_ENV,
+					title: '404',
+					status: 'The specified resource could not be found',
+					error: null
+				});
 			}
 		});
 };
