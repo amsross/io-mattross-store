@@ -1,8 +1,8 @@
 if category
 	.category.category--small.well.well-sm
 		p.category-name
-			a(href="/categories/" + category.slug)
+			a(href='/categories/' + category.slug)
 				= category.name
 		p.category-image
-			a(href="/categories/" + category.slug)
-				img.thumbnail.img-responsive(src="http://placehold.it/200&text=" + category.name)
+			a(href='/categories/' + category.slug)
+				img.thumbnail.img-responsive(src='http://placehold.it/200&text=' + category.name)

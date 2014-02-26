@@ -6,11 +6,11 @@ block content
 			each product in cart.items
 				tr.item
 					td.col-xs-2
-						a(href="/products/" + product.slug)
-							img.img-responsive(src="http://placehold.it/500&text=" + product.name)
+						a(href='/products/' + product.slug)
+							img.img-responsive(src='http://placehold.it/500&text=' + product.name)
 						br
 					td.col-xs-5
-						a(href="/products/" + product.slug)= product.name
+						a(href='/products/' + product.slug)= product.name
 					td.col-xs-2
 						= product.prettyPrice
 					td.col-xs-1
