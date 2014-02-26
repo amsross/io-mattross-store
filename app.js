@@ -37,12 +37,11 @@ module.exports = function (db) {
 		app.use(express.cookieParser());
 		app.use(express.session({secret: 'sdfwef234f2e2f24fkhdlkj238'}));
 		app.use(flash());
-		// app.use(express.csrf());
 		app.use(express.favicon());
-		app.use(express.json());
 		app.use(express.logger('dev'));
-		app.use(express.methodOverride());
+		app.use(express.json());
 		app.use(express.urlencoded());
+		app.use(express.methodOverride());
 		app.use(function (req, res, next) {
 			res.set('X-Powered-By', 'mattross.io');
 
