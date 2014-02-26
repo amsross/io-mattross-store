@@ -37,7 +37,7 @@ module.exports = function (db) {
 		app.use(express.cookieParser());
 		app.use(express.session({secret: 'sdfwef234f2e2f24fkhdlkj238'}));
 		app.use(flash());
-		app.use(express.favicon());
+		app.use(express.favicon('favicon.ico'));
 		app.use(express.logger('dev'));
 		app.use(express.json());
 		app.use(express.urlencoded());
