@@ -1,6 +1,7 @@
 'use strict';
 var mongoose = require('mongoose'),
 	validator = require('validator'),
+	_ = require('underscore'),
 	findOrCreate = require('mongoose-findorcreate'),
 	CategorySchema = require('./category'),
 	Schema = mongoose.Schema;
@@ -23,7 +24,11 @@ var ProductSchema = new Schema({
 		lowercase: true,
 		trim: true
 	},
-	price: Number
+	price: Number,
+	categories: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Category'
+	}]
 });
 
 ProductSchema.methods.prettyPrice = function(price) {

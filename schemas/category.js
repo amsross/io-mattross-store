@@ -1,6 +1,7 @@
 'use strict';
 var mongoose = require('mongoose'),
 	validator = require('validator'),
+	_ = require('underscore'),
 	findOrCreate = require('mongoose-findorcreate'),
 	ProductSchema = require('./product'),
 	Schema = mongoose.Schema ;
@@ -26,6 +27,10 @@ var CategorySchema = new Schema({
 	products: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Product'
+	}],
+	parent_categories: [{
+		type: Schema.Types.ObjectId,
+		ref: 'Category'
 	}],
 	sub_categories: [{
 		type: Schema.Types.ObjectId,
