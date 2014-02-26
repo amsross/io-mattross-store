@@ -17,9 +17,10 @@ if category
 								small= product.name
 				input(type='hidden', name='category[name]', value=category.name)
 				.row
-					.col-sm-4
+					.col-sm-6
 						button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
-					.col-sm-4
-						button.btn.btn-block.btn-warning(name='_method', value='PUT') update
-					.col-sm-4
-						button.btn.btn-block.btn-primary(name='_method', value='POST') create
+					.col-sm-6
+						if category.isNew
+							button.btn.btn-block.btn-info(name='_method', value='POST') create
+						else
+							button.btn.btn-block.btn-info(name='_method', value='PUT') update
