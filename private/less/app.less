@@ -1,7 +1,40 @@
 @import "/private/bower_components/bootstrap/less/bootstrap.less";
 
+body {
+	padding-top: @grid-gutter-width;
+}
+
 [contenteditable] {
 	border-radius: 4px;
 	border: 1px solid rgba(255,200,100,0.5);
 	margin-bottom: 4px;
+}
+
+.carousel {
+	margin-bottom: @grid-gutter-width;
+}
+
+.product {
+	.product-name {}
+	.product-image {}
+	.product-price {}
+	&.product--small {
+		.product-name {
+			min-height: (@line-height-base * 2em)
+		}
+	}
+	&.product--large {
+	}
+}
+
+.category {
+	.category-name {}
+	.category-image {}
+	&.category--small {
+		.category-name {
+			min-height: (@line-height-base * 2em)
+		}
+	}
+	&.category--large {
+	}
 }

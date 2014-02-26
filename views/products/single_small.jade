@@ -1,9 +1,10 @@
 if product
-	a(href="/products/" + product.slug)
-		.well
-			p.name
+	.product.product--small.well
+		p.product-name
+			a(href="/products/" + product.slug)
 				= product.name
-			p.image
-				img.img-responsive(src="http://placehold.it/500&text=" + product.name)
-			p.price
-				= product.price
+		p.product-image
+			a(href="/products/" + product.slug)
+				img.img-responsive(src="http://placehold.it/200&text=" + product.name)
+		p.product-price
+			= product.prettyPrice()
