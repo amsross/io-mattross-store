@@ -1,0 +1,5 @@
+if flashes
+	each flash, type in flashes
+		div(class='alert alert-dismissable alert-' + type)
+			button.close(type='button', data-dismiss='alert', aria-hidden='true') &times;
+			= flash

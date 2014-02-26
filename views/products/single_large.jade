@@ -1,8 +1,8 @@
 if product
 	.product
-		.col-xs-12.col-md-6.image
+		.col-xs-12.col-md-5.image
 			img.img-responsive(src='http://placehold.it/500&text=' + product.name)
-		.col-xs-12.col-md-6.info(id='product_' + product._id)
+		.col-xs-12.col-md-7.info(id='product_' + product._id)
 			.col-xs-12
 				h2(contenteditable, data-name='product[name]')= product.name
 			.col-xs-12.col-md-6.row

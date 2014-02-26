@@ -14,6 +14,7 @@ exports.new = function(req, res){
 	var category = new CategorySchema();
 
 	res.render('categories/edit', {
+		flashes: req.flash(),
 		env: req.NODE_ENV,
 		title: 'Categories',
 		menu: 'categories categories_edit',
@@ -49,6 +50,7 @@ exports.get = function(req, res){
 						});
 					} else {
 						res.render('categories/edit', {
+							flashes: req.flash(),
 							env: req.NODE_ENV,
 							title: 'Categories',
 							menu: 'categories categories_edit',
@@ -90,6 +92,7 @@ exports.post = function(req, res){
 					error: err
 				});
 			} else {
+				req.flash('success', 'Resource created');
 				res.redirect('/categories/' + category.slug);
 			}
 		});
@@ -137,6 +140,7 @@ exports.put = function(req, res){
 							error: err
 						});
 					} else {
+						req.flash('success', 'Resource updated');
 						res.redirect('/categories/' + category.slug);
 					}
 				});
@@ -181,6 +185,7 @@ exports.delete = function(req, res){
 							error: err
 						});
 					} else {
+						req.flash('success', 'Resource deleted');
 						res.redirect('/');
 					}
 				});

@@ -2,7 +2,8 @@
  * Module dependencies
  */
 var ProductSchema = require('../schemas/product'),
-	ObjectId = require('mongoose').Types.ObjectId;
+	ObjectId = require('mongoose').Types.ObjectId,
+	_ = require('underscore');
 
 /*
  * NEW product page.
@@ -13,6 +14,7 @@ exports.new = function(req, res){
 	var product = new ProductSchema();
 
 	res.render('products/edit', {
+		flashes: req.flash(),
 		env: req.NODE_ENV,
 		title: 'Products',
 		menu: 'products products_edit',
@@ -38,6 +40,7 @@ exports.get = function(req, res){
 			});
 		} else if (product) {
 			res.render('products/edit', {
+				flashes: req.flash(),
 				env: req.NODE_ENV,
 				title: 'Products',
 				menu: 'products products_edit',
@@ -77,6 +80,7 @@ exports.post = function(req, res){
 					error: err
 				});
 			} else {
+				req.flash('success', 'Resource created');
 				res.redirect('/products/' + product.slug);
 			}
 		});
@@ -124,6 +128,7 @@ exports.put = function(req, res){
 							error: err
 						});
 					} else {
+						req.flash('success', 'Resource updated');
 						res.redirect('/products/' + product.slug);
 					}
 				});
@@ -168,6 +173,7 @@ exports.delete = function(req, res){
 							error: err
 						});
 					} else {
+						req.flash('success', 'Resource deleted');
 						res.redirect('/');
 					}
 				});
