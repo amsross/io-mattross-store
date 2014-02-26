@@ -11,11 +11,11 @@ var ProductSchema = require('../schemas/product'),
 exports.index = function(req, res){
 	'use strict';
 
-	CategorySchema
-		.find({isTopLevel: true})
-		.populate('products')
+	ProductSchema
+		.find({isFeatured: true})
+		.sort({ updated: -1 })
 		.limit(4)
-		.exec(function(err, categories) {
+		.exec(function(err, products) {
 			if (err) {
 				console.log(err);
 				res.status(500).json({
@@ -23,30 +23,14 @@ exports.index = function(req, res){
 					error: err
 				});
 			} else {
-
-				ProductSchema
-					.find({isFeatured: true})
-					.sort({ updated: -1 })
-					.limit(4)
-					.exec(function(err, products) {
-						if (err) {
-							console.log(err);
-							res.status(500).json({
-								status: 'failure',
-								error: err
-							});
-						} else {
-							res.render('index', {
-								site_parts: req.site_parts,
-								flashes: req.flash(),
-								env: req.NODE_ENV,
-								title: 'Home &raquo',
-								menu: 'home',
-								products: products,
-								categories: categories
-							});
-						}
-					});
+				res.render('index', {
+					site_parts: req.site_parts,
+					flashes: req.flash(),
+					env: req.NODE_ENV,
+					title: 'Home &raquo',
+					menu: 'home',
+					products: products
+				});
 			}
 		});
 };
