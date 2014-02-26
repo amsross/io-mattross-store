@@ -11,7 +11,7 @@ var ProductSchema = require('../schemas/product'),
 exports.get = function(req, res){
 	'use strict';
 
-	// Retrieve the shopping cart from memory
+	// retrieve the shopping cart from memory
 	var cart = req.session.cart,
 		displayCart = {
 			items: [],
@@ -25,7 +25,7 @@ exports.get = function(req, res){
 		return;
 	}
 
-	// Ready the products for display
+	// ready the products for display
 	for (var item in cart) {
 		displayCart.items.push(cart[item]);
 		total += (cart[item].qty * cart[item].price);
@@ -67,10 +67,13 @@ exports.post = function(req, res){
 
 			// add or increase the product quantity in the shopping cart.
 			if (cart[param_id]) {
+				req.flash('info', 'Quantity updated');
 				cart[param_id].qty++;
 			} else {
+				req.flash('success', 'Item added to cart');
 				cart[param_id] = {
 					name: product.name,
+					slug: product.slug,
 					price: product.price,
 					prettyPrice: product.prettyPrice(),
 					qty: 1
