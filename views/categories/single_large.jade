@@ -1,3 +1,4 @@
+- var is_admin = true
 if category
 	.category.category--large
 		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), data-source='#category_' + category._id)
@@ -8,7 +9,7 @@ if category
 				.col-xs-12.col-md-7.info(id='category_' + category._id)
 					.row
 						.col-xs-12
-							h2(contenteditable, data-name='category[name]')= category.name
+							h2(contenteditable=is_admin, data-name='category[name]')= category.name
 						.col-xs-12
 							.row
 								if products
@@ -23,10 +24,7 @@ if category
 						.col-xs-12
 							.row
 								label.col-sm-6
-									if (category.isTopLevel === true)
-										input(type='checkbox', name='category[isTopLevel]', value='true', checked)
-									else
-										input(type='checkbox', name='category[isTopLevel]', value='true')
+									input(type='checkbox', name='category[isTopLevel]', value='true', checked=category.isTopLevel)
 									small  Top Level
 						.col-xs-12
 							.row

@@ -1,3 +1,4 @@
+- var is_admin = true
 if product
 	.product.product--large
 		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''))
@@ -9,37 +10,42 @@ if product
 				.col-xs-12.col-md-7.info
 					.row
 						.col-xs-12
-							h2(contenteditable, data-name='product[name]')= product.name
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Price
-							.col-xs-7(contenteditable, data-name='product[price]')= product.price
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Brand:
-							.col-xs-7(contenteditable, data-name='product[brand]')= product.brand
-						.col-xs-12.col-md-6.row
-							.col-xs-5. SKU:
-							.col-xs-7(contenteditable, data-name='product[sku]')= product.sku
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Stock:
-							.col-xs-7(contenteditable, data-name='product[stock]')= product.stock
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Rating:
-							.col-xs-7(contenteditable, data-name='product[rating]')= xxx
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Shippable:
-							.col-xs-7(contenteditable, data-name='product[shipping]')= product.shipping
-						.col-xs-12.col-md-6.row
-							.col-xs-5. Quantity:
-							.col-xs-7(contenteditable, data-name='product[quantity]')= product.quantity
-						.col-xs-12.col-md-6.row
-							.col-xs-12
-								a(href='javascript:;') Write a Review
+							h2(contenteditable=is_admin, data-name='product[name]')= product.name
+						.col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Price
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[price]')= product.price
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Brand:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[brand]')= product.brand
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. SKU:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[sku]')= product.sku
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Stock:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[stock]')= product.stock
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Rating:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[rating]')= xxx
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Shippable:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[shipping]')= product.shipping
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-4.col-md-5. Quantity:
+								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[quantity]')= product.quantity
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-12
+									a(href='javascript:;') Write a Review
 					.row
 						label.col-sm-6
-							if (product.isFeatured === true)
-								input(type='checkbox', name='product[isFeatured]', value='true', checked)
-							else
-								input(type='checkbox', name='product[isFeatured]', value='true')
+							input(type='checkbox', name='product[isFeatured]', value='true', checked=product.isFeatured)
 							small  Featured
 					.row
 						.col-sm-4
