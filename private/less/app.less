@@ -4,10 +4,14 @@ body {
 	padding-top: @grid-gutter-width;
 }
 
-[contenteditable] {
-	border-radius: 4px;
-	border: 1px solid rgba(255,200,100,0.5);
-	margin-bottom: 4px;
+
+form.contenteditable {
+	margin-bottom: @grid-gutter-width;
+	[contenteditable] {
+		border-radius: 4px;
+		border: 1px solid rgba(255,200,100,0.5);
+		margin-bottom: 4px;
+	}
 }
 
 .carousel {
