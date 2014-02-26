@@ -1,8 +1,22 @@
 /*
  * Module dependencies
  */
-var ProductSchema = require('../schemas/product'),
-	_ = require('underscore');
+var _ = require('underscore'),
+	CategorySchema = require('../schemas/category'),
+	ProductSchema = require('../schemas/product'),
+	central_render = function(req, res, params) {
+		'use strict';
+		res.status(params.status||200).render(params.template||'', _.extend({
+			body_class: params.body_class||'',
+			category: params.category||null,
+			env: params.env||req.NODE_ENV,
+			flashes: params.flashes||req.flash(),
+			menu: params.menu||'',
+			message: params.message||'',
+			site_parts: params.site_parts||req.site_parts,
+			title: params.title ? params.title + ' &raquo; ' : ''
+		}, params.addons));
+	};
 
 /*
  * NEW product page.
@@ -12,13 +26,14 @@ exports.new = function(req, res){
 
 	var product = new ProductSchema();
 
-	res.render('products/edit', {
-		site_parts: req.site_parts,
-		flashes: req.flash(),
-		env: req.NODE_ENV,
+	central_render(req, res, {
+		body_class: 'products products_edit',
+		message: 'internal failure',
+		template: 'products/edit',
 		title: 'Products',
-		menu: 'products products_edit',
-		product: product
+		addons: {
+			product: product
+		}
 	});
 };
 
@@ -34,30 +49,32 @@ exports.get = function(req, res){
 	record = ProductSchema.findOne({'slug': param_slug}, function (err, product) {
 		if (err) {
 			console.log(err);
-			res.status(500).render({
-				site_parts: req.site_parts,
-				flashes: req.flash(),
-				env: req.NODE_ENV,
+			central_render(req, res, {
+				status: 500,
+				template: '500',
 				title: '500',
-				status: 'internal failure',
-				error: err
+				addons: {
+					error: err,
+					message: 'internal failure'
+				}
 			});
 		} else if (product) {
-			res.render('products/edit', {
-				site_parts: req.site_parts,
-				flashes: req.flash(),
-				env: req.NODE_ENV,
+			central_render(req, res, {
+				body_class: 'products products_edit',
+				template: 'products/edit',
 				title: 'Products',
-				menu: 'products products_edit',
-				product: product
+				addons: {
+					product: product
+				}
 			});
 		} else {
-			res.status(404).render('404', {
-				site_parts: req.site_parts,
-				flashes: req.flash(),
-				env: req.NODE_ENV,
+			central_render(req, res, {
+				status: 404,
+				template: '404',
 				title: '404',
-				status: 'The specified resource could not be found'
+				addons: {
+					message: 'The specified resource could not be found'
+				}
 			});
 		}
 	});
@@ -81,13 +98,14 @@ exports.post = function(req, res){
 		product.save(function (err, product) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 500,
+					template: '500',
 					title: '500',
-					status: 'internal failure',
-					error: err
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
 				});
 			} else {
 				req.flash('success', 'Resource created');
@@ -95,13 +113,13 @@ exports.post = function(req, res){
 			}
 		});
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			addons: {
+				message: 'Resource not provided'
+			}
 		});
 	}
 };
@@ -120,13 +138,14 @@ exports.put = function(req, res){
 		record = ProductSchema.findOne({'slug': param_slug}, function (err, product) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 500,
+					template: '500',
 					title: '500',
-					status: 'internal failure',
-					error: err
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
 				});
 			} else if (product) {
 				product.name = param_product.name;
@@ -136,13 +155,14 @@ exports.put = function(req, res){
 				product.save(function (err, product, numberAffected) {
 					if (err) {
 						console.log(err);
-						res.status(500).render('500', {
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
+						central_render(req, res, {
+							status: 500,
+							template: '500',
 							title: '500',
-							status: 'internal failure',
-							error: err
+							addons: {
+								error: err,
+								message: 'internal failure'
+							}
 						});
 					} else {
 						req.flash('success', 'Resource updated');
@@ -150,24 +170,24 @@ exports.put = function(req, res){
 					}
 				});
 			} else {
-				res.status(404).render('404', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 404,
+					template: '404',
 					title: '404',
-					status: 'The specified resource could not be found',
-					error: null
+					addons: {
+						message: 'The specified resource could not be found'
+					}
 				});
 			}
 		});
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			addons: {
+				message: 'Resource not provided'
+			}
 		});
 	}
 };
@@ -182,25 +202,27 @@ exports.delete = function(req, res){
 		record = ProductSchema.findOne({ 'slug': param_slug }, function (err, product) {
 			if (err) {
 				console.log(err);
-				res.status(500).render({
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 500,
+					template: '500',
 					title: '500',
-					status: 'internal failure',
-					error: err
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
 				});
 			} else if (product) {
 				product.remove(function (err, product) {
 					if (err) {
 						console.log(err);
-						res.status(500).render({
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
+						central_render(req, res, {
+							status: 500,
+							template: '500',
 							title: '500',
-							status: 'internal failure',
-							error: err
+							addons: {
+								error: err,
+								message: 'internal failure'
+							}
 						});
 					} else {
 						req.flash('success', 'Resource deleted');
@@ -208,13 +230,13 @@ exports.delete = function(req, res){
 					}
 				});
 			} else {
-				res.status(404).render('404', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 404,
+					template: '404',
 					title: '404',
-					status: 'The specified resource could not be found',
-					error: null
+					addons: {
+						message: 'The specified resource could not be found'
+					}
 				});
 			}
 		});

@@ -1,8 +1,8 @@
 header.row.margin-top
-	.col-xs-12.col-md-6.text-left
+	//- .col-xs-12.col-md-6.text-left
 		a(href='/')
 			.well.well-sm brand
-	.col-xs-12.col-md-6.text-right
+	//- .col-xs-12.col-md-6.text-right
 		ul.nav.nav-pills
 			if site_parts && site_parts.cart && site_parts.cart.total
 				li.pull-right
@@ -11,13 +11,17 @@ header.row.margin-top
 	.col-xs-12
 		.navbar.navbar-default.navbar-static-top(role='navigation')
 			ul.nav.navbar-nav
-				li
+				li(class=(menu === 'home' ? 'active' : ''))
 					a(href='/') Home
 				if site_parts && site_parts.categories
 					each category in site_parts.categories
-						li
+						li(class=(menu === category.slug ? 'active' : ''))
 							a(href='/categories/' + category.slug)
 								= category.name
+			if site_parts && site_parts.cart && site_parts.cart.total
+				p.navbar-text.navbar-right
+					a(href='/cart').label.label-primary In Cart: 
+						= '$' + site_parts.cart.total
 	if flashes
 		.col-xs-12
 			include flashes

@@ -1,11 +1,22 @@
 /*
  * Module dependencies
  */
-var mongoose = require('mongoose'),
-	Schema = mongoose.Schema,
+var _ = require('underscore'),
 	CategorySchema = require('../schemas/category'),
 	ProductSchema = require('../schemas/product'),
-	_ = require('underscore');
+	central_render = function(req, res, params) {
+		'use strict';
+		res.status(params.status||200).render(params.template||'', _.extend({
+			body_class: params.body_class||'',
+			category: params.category||null,
+			env: params.env||req.NODE_ENV,
+			flashes: params.flashes||req.flash(),
+			menu: params.menu||'',
+			message: params.message||'',
+			site_parts: params.site_parts||req.site_parts,
+			title: params.title ? params.title + ' &raquo; ' : ''
+		}, params.addons));
+	};
 
 /*
  * NEW category page.
@@ -15,13 +26,14 @@ exports.new = function(req, res){
 
 	var category = new CategorySchema();
 
-	res.render('categories/edit', {
-		site_parts: req.site_parts,
-		flashes: req.flash(),
-		env: req.NODE_ENV,
+	central_render(req, res, {
+		body_class: 'categories categories_edit',
+		message: 'internal failure',
+		template: 'categories/edit',
 		title: 'Categories',
-		menu: 'categories categories_edit',
-		category: category
+		addons: {
+			category: category
+		}
 	});
 };
 
@@ -37,12 +49,14 @@ exports.get = function(req, res){
 	record = CategorySchema.findOne({'slug': param_slug}).populate('products').exec( function (err, category) {
 		if (err) {
 			console.log(err);
-			res.status(500).render('500', {
-				site_parts: req.site_parts,
-				flashes: req.flash(),
-				env: req.NODE_ENV,
-				status: 'internal failure',
-				error: err
+			central_render(req, res, {
+				status: 500,
+				template: '500',
+				title: '500',
+				addons: {
+					error: err,
+					message: 'internal failure'
+				}
 			});
 		} else if (category) {
 
@@ -50,32 +64,37 @@ exports.get = function(req, res){
 				.exec(function(err, products) {
 					if (err) {
 						console.log(err);
-						res.status(500).render('500', {
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
-							status: 'internal failure',
-							error: err
+						central_render(req, res, {
+							body_class: 'categories categories_edit',
+							status: 500,
+							template: '500',
+							title: '500',
+							addons: {
+								error: err,
+								message: 'internal failure'
+							}
 						});
 					} else {
-						res.render('categories/edit', {
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
+						central_render(req, res, {
+							body_class: 'categories categories_edit',
+							menu: category.slug,
+							template: 'categories/edit',
 							title: 'Categories',
-							menu: 'categories categories_edit',
-							category: category,
-							products: products
+							addons: {
+								category: category,
+								products: products
+							}
 						});
 					}
 				});
 		} else {
-			res.status(404).render('404', {
-				site_parts: req.site_parts,
-				flashes: req.flash(),
-				env: req.NODE_ENV,
+			central_render(req, res, {
+				status: 404,
+				template: '404',
 				title: '404',
-				status: 'The specified resource could not be found'
+				addons: {
+					message: 'The specified resource could not be found'
+				}
 			});
 		}
 	});
@@ -98,13 +117,14 @@ exports.post = function(req, res){
 		category.save(function (err, category) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 500,
+					template: '500',
 					title: '500',
-					status: 'internal failure',
-					error: err
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
 				});
 			} else {
 				req.flash('success', 'Resource created');
@@ -112,13 +132,13 @@ exports.post = function(req, res){
 			}
 		});
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			addons: {
+				message: 'Resource not provided'
+			}
 		});
 	}
 };
@@ -137,13 +157,14 @@ exports.put = function(req, res){
 		record = CategorySchema.findOne({'slug': param_slug}, function (err, category) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 500,
+					template: '500',
 					title: '500',
-					status: 'internal failure',
-					error: err
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
 				});
 			} else if (category) {
 				category.name = param_category.name;
@@ -153,13 +174,14 @@ exports.put = function(req, res){
 				category.save(function (err, category, numberAffected) {
 					if (err) {
 						console.log(err);
-						res.status(500).render('500', {
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
+						central_render(req, res, {
+							status: 500,
+							template: '500',
 							title: '500',
-							status: 'internal failure',
-							error: err
+							addons: {
+								error: err,
+								message: 'internal failure'
+							}
 						});
 					} else {
 
@@ -168,13 +190,14 @@ exports.put = function(req, res){
 							.find({categories: { '$in' : [category._id]}}, function (err, products) {
 								if (err) {
 									console.log(err);
-									res.status(500).render('500', {
-										site_parts: req.site_parts,
-										flashes: req.flash(),
-										env: req.NODE_ENV,
+									central_render(req, res, {
+										status: 500,
+										template: '500',
 										title: '500',
-										status: 'internal failure',
-										error: err
+										addons: {
+											error: err,
+											message: 'internal failure'
+										}
 									});
 								} else if (products) {
 									_.each(products, function(product) {
@@ -201,23 +224,25 @@ exports.put = function(req, res){
 					}
 				});
 			} else {
-				res.status(404).render('404', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
+				central_render(req, res, {
+					status: 404,
+					template: '404',
 					title: '404',
-					status: 'The specified resource could not be found'
+					addons: {
+						error: err,
+						message: 'The specified resource could not be found'
+					}
 				});
 			}
 		});
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			addons: {
+				message: 'Resource not provided',
+			}
 		});
 	}
 };
@@ -232,23 +257,25 @@ exports.delete = function(req, res){
 		record = CategorySchema.findOne({ 'slug': param_slug }, function (err, category) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
-					status: 'internal failure',
-					error: err
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						message: 'internal failure'
+					}
 				});
 			} else if (category) {
 				category.remove(function (err, category) {
 					if (err) {
 						console.log(err);
-						res.status(500).render('500', {
-							site_parts: req.site_parts,
-							flashes: req.flash(),
-							env: req.NODE_ENV,
-							status: 'internal failure',
-							error: err
+						central_render(req, res, {
+							status: 500,
+							template: '500',
+							title: '500',
+							addons: {
+								message: 'internal failure'
+							}
 						});
 					} else {
 						req.flash('success', 'Resource deleted');
@@ -256,12 +283,13 @@ exports.delete = function(req, res){
 					}
 				});
 			} else {
-				res.status(404).render('404', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
-					title: '404',
-					status: 'The specified resource could not be found'
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						message: 'The specified resource could not be found'
+					}
 				});
 			}
 		});
