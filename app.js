@@ -19,6 +19,7 @@ module.exports = function (db) {
 	// production only
 	if ('production' === app.get('env')) {
 		console.log('env: production');
+		require('newrelic');
 	}
 
 	// development only
