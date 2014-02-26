@@ -1,5 +1,6 @@
 'use strict';
 var mongoose = require('mongoose'),
+	validator = require('validator'),
 	findOrCreate = require('mongoose-findorcreate'),
 	CategorySchema = require('./category'),
 	Schema = mongoose.Schema;
@@ -30,11 +31,14 @@ ProductSchema.plugin(findOrCreate);
 /**
  * Validations
  */
-var validatePresenceOf = function(value) {
-	return value && value.length;
+var validateName = function(name) {
+	return !validator.isNull(name) && name.length;
 };
-var validatePrice = function(value) {
-	return value && value > 0;
+var validateSlug = function(slug) {
+	return !validator.isNull(slug) && validator.isLength(slug, 1)  && validator.isLowercase(slug);
+};
+var validatePrice = function(price) {
+	return !validator.isNull(price) && validator.isLength(price, 1);
 };
 
 /**
@@ -47,14 +51,14 @@ ProductSchema.pre('save', function(next) {
 	// that.updated = Date.now;
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
 
-	if (!validatePresenceOf(that.slug)) {
+	if (!validateSlug(that.slug)) {
 		next(new Error('Product slug is required'));
 	} else {
 		mongoose.model('Product', ProductSchema).find({slug: that.slug}, function (err, products) {
 			if (that.isNew && products.length) {
 				next(new Error('Product slug already exists'));
 			}
-			if (!validatePresenceOf(that.name)) {
+			if (!validateName(that.name)) {
 				next(new Error('Product name is required'));
 			}
 			if (!validatePrice(that.price)) {

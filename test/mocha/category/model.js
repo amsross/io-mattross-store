@@ -41,7 +41,7 @@ describe('<Unit Test>', function() {
 				});
 			});
 
-			it('should fail to save an category with an existing slug', function(done) {
+			it('should fail to save a category with an existing slug', function(done) {
 				return category_02.save(function(err) {
 					should.exist(err);
 					done();
@@ -55,23 +55,24 @@ describe('<Unit Test>', function() {
 					price: 359.99
 				});
 				product_01.save();
+				category_01.products.push(product_01);
 
 				product_02 = new Product({
 					name: 'Test Product 02',
 					price: 359.99
 				});
 				product_02.save();
-
-				category_01.products.push(product_01);
 				category_01.products.push(product_02);
-				return category_01.save(function(err) {
+
+				return category_03.save(function(err) {
 					should.not.exist(err);
 					done();
 				});
 			});
 
 			it('should be able to add subcategories', function(done) {
-				category_01.sub_categories.push(category_01);
+
+				category_04.sub_categories.push(category_01);
 				return category_04.save(function(err) {
 					should.not.exist(err);
 					done();
@@ -79,6 +80,7 @@ describe('<Unit Test>', function() {
 			});
 
 			it('should be able to show an error when try to save without name', function(done) {
+
 				category_02.name = '';
 				return category_02.save(function(err) {
 					should.exist(err);

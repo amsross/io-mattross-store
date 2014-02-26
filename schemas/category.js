@@ -1,5 +1,6 @@
 'use strict';
 var mongoose = require('mongoose'),
+	validator = require('validator'),
 	findOrCreate = require('mongoose-findorcreate'),
 	ProductSchema = require('./product'),
 	Schema = mongoose.Schema ;
@@ -37,8 +38,11 @@ CategorySchema.plugin(findOrCreate);
 /**
  * Validations
  */
-var validatePresenceOf = function(value) {
-	return value && value.length;
+var validateName = function(name) {
+	return !validator.isNull(name) && name.length;
+};
+var validateSlug = function(slug) {
+	return !validator.isNull(slug) && validator.isLength(slug, 1)  && validator.isLowercase(slug);
 };
 
 /**
@@ -51,14 +55,14 @@ CategorySchema.pre('save', function(next) {
 	// that.updated = Date.now;
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
 
-	if (!validatePresenceOf(that.slug)) {
+	if (!validateSlug(that.slug)) {
 		next(new Error('Category slug is required'));
 	} else {
 		mongoose.model('Category', CategorySchema).find({slug: that.slug}, function (err, categories) {
 			if (that.isNew && categories.length) {
 				next(new Error('Category slug already exists'));
 			}
-			if (!validatePresenceOf(that.name)) {
+			if (!validateName(that.name)) {
 				next(new Error('Category name is required'));
 			}
 			next();
