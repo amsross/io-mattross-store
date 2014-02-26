@@ -81,9 +81,10 @@ exports.post = function(req, res){
 		category;
 
 	if (param_category) {
-		category = new CategorySchema({
-			name: param_category.name
-		});
+		category = new CategorySchema();
+		category.name = param_category.name;
+		category.isTopLevel = param_category.isTopLevel;
+
 		category.save(function (err, category) {
 			if (err) {
 				console.log(err);
@@ -130,6 +131,7 @@ exports.put = function(req, res){
 				});
 			} else if (category) {
 				category.name = param_category.name;
+				category.isTopLevel = param_category.isTopLevel;
 				category.products = param_category.products;
 
 				category.save(function (err, category, numberAffected) {

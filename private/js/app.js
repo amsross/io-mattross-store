@@ -7,51 +7,33 @@
 var io_mattross_store = {
 	// All pages
 	common: {
-		init: function() {},
+		init: function() {
+			$('form.contenteditable').submit( function() {
+
+				var that = this,
+					inputs = $(that).find('[contenteditable]'),
+					input_name = '',
+					input_text = '';
+
+				_.each(inputs, function(input){
+					input_name = $(input).data('name');
+					input_text = $(input).text();
+					$(that).find('[name="' + input_name + '"]').val(input_text);
+				});
+
+				that.submit();
+			});
+		},
 		finalize: function() {}
 	},
 	index: {
 		init: function() {}
 	},
 	products_edit: {
-		init: function() {
-			$('form').submit( function() {
-
-				var that = this,
-					source = $($(that).data('source')),
-					inputs = source.find('[contenteditable]'),
-					input_name = '',
-					input_text = '';
-
-				_.each(inputs, function(input){
-					input_name = $(input).data('name');
-					input_text = $(input).text();
-					$(that).find('[name="' + input_name + '"]').val(input_text);
-				});
-
-				that.submit();
-			});
-		}
+		init: function() {}
 	},
 	categories_edit: {
-		init: function() {
-			$('form').submit( function() {
-
-				var that = this,
-					source = $($(that).data('source')),
-					inputs = source.find('[contenteditable]'),
-					input_name = '',
-					input_text = '';
-
-				_.each(inputs, function(input){
-					input_name = $(input).data('name');
-					input_text = $(input).text();
-					$(that).find('[name="' + input_name + '"]').val(input_text);
-				});
-
-				that.submit();
-			});
-		}
+		init: function() {}
 	}
 };
 

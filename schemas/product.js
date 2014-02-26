@@ -7,14 +7,8 @@ var mongoose = require('mongoose'),
 	Schema = mongoose.Schema;
 
 var ProductSchema = new Schema({
-	created: {
-		type: Date,
-		default: Date.now
-	},
-	updated: {
-		type: Date,
-		default: Date.now
-	},
+	created: Date,
+	updated: Date,
 	name: {
 		type: String,
 		trim: true
@@ -54,6 +48,9 @@ var validateSlug = function(slug) {
 var validatePrice = function(price) {
 	return !validator.isNull(price) && validator.isLength(price, 1);
 };
+var validateDate = function(date) {
+	return validator.isDate(date) && validator.isBefore(date, new Date());
+};
 
 /**
  * Pre-save hook
@@ -62,7 +59,11 @@ ProductSchema.pre('save', function(next) {
 
 	var that = this;
 
-	// that.updated = Date.now;
+	if (!validateDate(that.created)) {
+		that.set('created', new Date());
+	}
+	that.set('updated', new Date());
+
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
 
 	if (!validateSlug(that.slug)) {

@@ -53,6 +53,9 @@ var validateName = function(name) {
 var validateSlug = function(slug) {
 	return !validator.isNull(slug) && validator.isLength(slug, 1)  && validator.isLowercase(slug);
 };
+var validateDate = function(date) {
+	return validator.isDate(date) && validator.isBefore(date, new Date());
+};
 
 /**
  * Pre-save hook
@@ -60,6 +63,11 @@ var validateSlug = function(slug) {
 CategorySchema.pre('save', function(next) {
 
 	var that = this;
+
+	if (!validateDate(that.created)) {
+		that.set('created', new Date());
+	}
+	that.set('updated', new Date());
 
 	// that.updated = Date.now;
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');

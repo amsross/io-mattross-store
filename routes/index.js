@@ -12,7 +12,8 @@ exports.index = function(req, res){
 	'use strict';
 
 	CategorySchema
-		.find()
+		.find({isTopLevel: true})
+		.sort({ updated: -1 })
 		.populate('products')
 		.limit(4)
 		.exec(function(err, categories) {
@@ -25,7 +26,8 @@ exports.index = function(req, res){
 			} else {
 
 				ProductSchema
-					.find()
+					.find({isFeatured: true})
+					.sort({ updated: -1 })
 					.limit(4)
 					.exec(function(err, products) {
 						if (err) {

@@ -65,10 +65,11 @@ exports.post = function(req, res){
 		product;
 
 	if (param_product) {
-		product = new ProductSchema({
-			name: param_product.name,
-			price: param_product.price
-		});
+		product = new ProductSchema();
+		product.name = param_product.name;
+		product.price = param_product.price;
+		product.isFeatured = param_product.isFeatured;
+
 		product.save(function (err, product) {
 			if (err) {
 				console.log(err);
@@ -116,6 +117,7 @@ exports.put = function(req, res){
 			} else if (product) {
 				product.name = param_product.name;
 				product.price = param_product.price;
+				product.isFeatured = param_product.isFeatured;
 
 				product.save(function (err, product, numberAffected) {
 					if (err) {
