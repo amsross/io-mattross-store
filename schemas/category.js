@@ -39,6 +39,9 @@ var CategorySchema = new Schema({
 	isTopLevel: {
 		type: Boolean,
 		default: false
+	},
+	sort: {
+		type: Number
 	}
 });
 

@@ -13,7 +13,6 @@ exports.index = function(req, res){
 
 	CategorySchema
 		.find({isTopLevel: true})
-		.sort({ updated: -1 })
 		.populate('products')
 		.limit(4)
 		.exec(function(err, categories) {
@@ -38,6 +37,7 @@ exports.index = function(req, res){
 							});
 						} else {
 							res.render('index', {
+								site_parts: req.site_parts,
 								flashes: req.flash(),
 								env: req.NODE_ENV,
 								title: 'Home &raquo',

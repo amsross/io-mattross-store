@@ -6,7 +6,15 @@ header.row.margin-top
 		.well
 			a(href='/cart') cart
 	.col-xs-12
-		.well menu
+		.navbar.navbar-default.navbar-static-top(role='navigation')
+			ul.nav.navbar-nav
+				li
+					a(href='/') Home
+				if site_parts && site_parts.categories
+					each category in site_parts.categories
+						li
+							a(href='/categories/' + category.slug)
+								= category.name
 	if flashes
 		.col-xs-12
 			include flashes

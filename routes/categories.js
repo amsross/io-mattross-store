@@ -16,6 +16,7 @@ exports.new = function(req, res){
 	var category = new CategorySchema();
 
 	res.render('categories/edit', {
+		site_parts: req.site_parts,
 		flashes: req.flash(),
 		env: req.NODE_ENV,
 		title: 'Categories',
@@ -52,6 +53,7 @@ exports.get = function(req, res){
 						});
 					} else {
 						res.render('categories/edit', {
+							site_parts: req.site_parts,
 							flashes: req.flash(),
 							env: req.NODE_ENV,
 							title: 'Categories',

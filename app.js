@@ -5,14 +5,15 @@ module.exports = function (db) {
 	/**
 	 * Module dependencies.
 	 */
-	var
-		express = require('express'),
+	var express = require('express'),
+		cart = require('./routes/cart'),
+		categories = require('./routes/categories'),
+		CategorySchema = require('./schemas/category'),
 		flash = require('connect-flash'),
 		MongoStore = require('connect-mongo')(express),
 		path = require('path'),
-		cart = require('./routes/cart'),
-		categories = require('./routes/categories'),
 		products = require('./routes/products'),
+		ProductSchema = require('./schemas/product'),
 		routes = require('./routes'),
 		app = express()
 		;
@@ -42,36 +43,59 @@ module.exports = function (db) {
 		app.use(express.json());
 		app.use(express.urlencoded());
 		app.use(express.methodOverride());
+
 		app.use(function (req, res, next) {
 			res.set('X-Powered-By', 'mattross.io');
-
+			next();
+		});
+		app.use(function (req, res, next) {
 			// make the environment name available in routes, etc
 			req.NODE_ENV = app.get('env');
 			next();
 		});
+
 		app.use(app.router);
 		app.use(express.static(path.join(__dirname, 'public')));
 	});
 
 	app.locals._ = require('underscore');
 
-	app.get('/', routes.index);
 
-	app.delete('/products/:slug', products.delete);
-	app.get('/products/new/?', products.new);
-	app.get('/products/?:slug', products.get);
-	app.post('/products/?', products.post);
-	app.put('/products/:slug', products.put);
+	var site_parts = {};
 
-	app.delete('/categories/:slug', categories.delete);
-	app.get('/categories/new/?', categories.new);
-	app.get('/categories/?:slug', categories.get);
-	app.post('/categories/?', categories.post);
-	app.put('/categories/:slug', categories.put);
+	site_parts.categories = function (req, res, next) {
+		req.site_parts = req.site_parts||{};
 
-	app.get('/cart/?', cart.get);
-	app.get('/cart/add/?:_id', cart.post);
-	app.post('/cart/?:_id', cart.post);
+		CategorySchema
+			.find({isTopLevel: true})
+			.sort({ sort: 1, name: 1 })
+			.exec(function(err, categories) {
+				if (err) {
+					console.log(err);
+				} else {
+					req.site_parts.categories = categories;
+				}
+				next();
+			});
+	};
+
+	app.get('/', site_parts.categories, routes.index);
+
+	app.delete('/products/:slug', site_parts.categories, products.delete);
+	app.get('/products/new/?', site_parts.categories, products.new);
+	app.get('/products/?:slug', site_parts.categories, products.get);
+	app.post('/products/?', site_parts.categories, products.post);
+	app.put('/products/:slug', site_parts.categories, products.put);
+
+	app.delete('/categories/:slug', site_parts.categories, categories.delete);
+	app.get('/categories/new/?', site_parts.categories, categories.new);
+	app.get('/categories/?:slug', site_parts.categories, categories.get);
+	app.post('/categories/?', site_parts.categories, categories.post);
+	app.put('/categories/:slug', site_parts.categories, categories.put);
+
+	app.get('/cart/?', site_parts.categories, cart.get);
+	app.get('/cart/add/?:_id', site_parts.categories, cart.post);
+	app.post('/cart/?:_id', site_parts.categories, cart.post);
 
 	return app;
 };

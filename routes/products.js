@@ -13,6 +13,7 @@ exports.new = function(req, res){
 	var product = new ProductSchema();
 
 	res.render('products/edit', {
+		site_parts: req.site_parts,
 		flashes: req.flash(),
 		env: req.NODE_ENV,
 		title: 'Products',
@@ -39,6 +40,7 @@ exports.get = function(req, res){
 			});
 		} else if (product) {
 			res.render('products/edit', {
+				site_parts: req.site_parts,
 				flashes: req.flash(),
 				env: req.NODE_ENV,
 				title: 'Products',
