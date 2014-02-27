@@ -59,13 +59,11 @@ exports.new = function(req, res){
 			if (err) {
 				console.log(err);
 				central_render(req, res, {
-					body_class: 'products products_edit',
 					status: 500,
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'internal failure'
+						error: err
 					}
 				});
 			} else {
@@ -110,7 +108,6 @@ exports.get = function(req, res){
 					if (err) {
 						console.log(err);
 						central_render(req, res, {
-							body_class: 'products products_edit',
 							status: 500,
 							template: '500',
 							title: '500',
@@ -172,8 +169,7 @@ exports.post = function(req, res){
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'Internal failure'
+						error: err
 					}
 				});
 			} else {
@@ -215,8 +211,7 @@ exports.put = function(req, res){
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'Internal failure'
+						error: err
 					}
 				});
 			} else if (product) {
@@ -237,8 +232,7 @@ exports.put = function(req, res){
 							template: '500',
 							title: '500',
 							addons: {
-								error: err,
-								message: 'Internal failure'
+								error: err
 							}
 						});
 					} else {
@@ -285,8 +279,7 @@ exports.delete = function(req, res){
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'Internal failure'
+						error: err
 					}
 				});
 			} else if (product) {
