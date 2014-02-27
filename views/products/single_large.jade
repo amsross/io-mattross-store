@@ -47,17 +47,16 @@ if product
 						if is_admin
 							.col-xs-12
 								.row
-									- console.log(product.categories)
 									.col-sm-6
 										h5 Unselected Categories
-										ul.unstyled.sortable.product--sortable-categories(data-name='unused_categories')
+										ul.unstyled.sortable.product--sortable.product-sortable-categories(data-connectwith='.product-sortable-categories')
 											if categories
 												each category in categories
 													if (product.categories.indexOf(category._id) === -1)
 														li(value=category._id)= category.name
 									.col-sm-6
 										h5 Selected Categories
-										ul.unstyled.sortable.product--sortable-categories(contenteditable=is_admin, data-name='product[categories][]')
+										ul.unstyled.sortable.product--sortable.product-sortable-categories(data-connectwith='.product-sortable-categories', contenteditable=is_admin, data-name='product[categories][]')
 											if categories
 												each category in categories
 													if (product.categories.indexOf(category._id) !== -1)

@@ -8,6 +8,12 @@ var io_mattross_store = {
 	// All pages
 	common: {
 		init: function() {
+			_.each($('.sortable'), function(sortable) {
+				$(sortable).sortable({
+					connectWith: $(sortable).data('connectwith')
+				}).disableSelection();
+			});
+
 			$('form.contenteditable').submit( function() {
 
 				var that = this,
@@ -36,18 +42,10 @@ var io_mattross_store = {
 		init: function() {}
 	},
 	products_edit: {
-		init: function() {
-			$('.sortable').sortable({
-				connectWith: '.product--sortable-categories'
-			}).disableSelection();
-		}
+		init: function() {}
 	},
 	categories_edit: {
-		init: function() {
-			$('.sortable').sortable({
-				connectWith: '.category--sortable-products'
-			}).disableSelection();
-		}
+		init: function() {}
 	}
 };
 

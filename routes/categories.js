@@ -54,15 +54,49 @@ exports.new = function(req, res){
 
 	var category = new CategorySchema();
 
-	central_render(req, res, {
-		body_class: 'categories categories_edit',
-		message: 'internal failure',
-		template: 'categories/edit',
-		title: 'Categories',
-		addons: {
-			category: category
-		}
-	});
+	// get all the products that can be added to this category
+	require('../schemas/product').find()
+		.exec(function(err, products) {
+			if (err) {
+				console.log(err);
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						error: err
+					}
+				});
+			} else {
+				// get all the categories that can be added as sub_categories
+				require('../schemas/category').find()
+					.exec(function(err, categories) {
+						if (err) {
+							console.log(err);
+							central_render(req, res, {
+								status: 500,
+								template: '500',
+								title: '500',
+								addons: {
+									error: err
+								}
+							});
+						} else {
+							central_render(req, res, {
+								body_class: 'categories categories_edit',
+								menu: 'New Category',
+								template: 'categories/edit',
+								title: 'Categories',
+								addons: {
+									categories: categories,
+									category: category,
+									products: products
+								}
+							});
+						}
+					});
+			}
+		});
 };
 
 /*
@@ -82,37 +116,52 @@ exports.get = function(req, res){
 				template: '500',
 				title: '500',
 				addons: {
-					error: err,
-					message: 'internal failure'
+					error: err
 				}
 			});
 		} else if (category) {
 
+			// get all the products that can be added to this category
 			require('../schemas/product').find()
 				.exec(function(err, products) {
 					if (err) {
 						console.log(err);
 						central_render(req, res, {
-							body_class: 'categories categories_edit',
 							status: 500,
 							template: '500',
 							title: '500',
 							addons: {
-								error: err,
-								message: 'internal failure'
+								error: err
 							}
 						});
 					} else {
-						central_render(req, res, {
-							body_class: 'categories categories_edit',
-							menu: category.slug,
-							template: 'categories/edit',
-							title: 'Categories',
-							addons: {
-								category: category,
-								products: products
-							}
-						});
+						// get all the categories that can be added as sub_categories
+						require('../schemas/category').find()
+							.exec(function(err, categories) {
+								if (err) {
+									console.log(err);
+									central_render(req, res, {
+										status: 500,
+										template: '500',
+										title: '500',
+										addons: {
+											error: err
+										}
+									});
+								} else {
+									central_render(req, res, {
+										body_class: 'categories categories_edit',
+										menu: category.slug,
+										template: 'categories/edit',
+										title: 'Categories',
+										addons: {
+											categories: categories,
+											category: category,
+											products: products
+										}
+									});
+								}
+							});
 					}
 				});
 		} else {
@@ -142,9 +191,11 @@ exports.post = function(req, res){
 	if (param_category) {
 
 		category = new CategorySchema();
-		category.set('name', param_category.name);
 		category.set('description', param_category.description);
 		category.set('isTopLevel', param_category.isTopLevel);
+		category.set('name', param_category.name);
+		category.set('products', param_category.products);
+		category.set('sub_categories', param_category.sub_categories);
 
 		central_upload(req, category);
 
@@ -156,8 +207,7 @@ exports.post = function(req, res){
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'internal failure'
+						error: err
 					}
 				});
 			} else {
@@ -198,16 +248,16 @@ exports.put = function(req, res){
 					template: '500',
 					title: '500',
 					addons: {
-						error: err,
-						message: 'internal failure'
+						error: err
 					}
 				});
 			} else if (category) {
 
-				category.set('name', param_category.name);
 				category.set('description', param_category.description);
 				category.set('isTopLevel', param_category.isTopLevel);
+				category.set('name', param_category.name);
 				category.set('products', param_category.products);
+				category.set('sub_categories', param_category.sub_categories);
 
 				central_upload(req, category);
 
@@ -219,45 +269,10 @@ exports.put = function(req, res){
 							template: '500',
 							title: '500',
 							addons: {
-								error: err,
-								message: 'internal failure'
+								error: err
 							}
 						});
 					} else {
-
-						// remove this category from any products no longer in the category.products array
-						ProductSchema
-							.find({categories: { '$in' : [category._id]}}, function (err, products) {
-								if (err) {
-									console.log(err);
-									central_render(req, res, {
-										status: 500,
-										template: '500',
-										title: '500',
-										addons: {
-											error: err,
-											message: 'internal failure'
-										}
-									});
-								} else if (products) {
-									_.each(products, function(product) {
-										if ((category.products||[]).indexOf(product._id) === -1) {
-											product.categories.remove(category);
-											product.save();
-										}
-									});
-								}
-							});
-
-						// add this category to any products now in the category.products array
-						category.populate('products', function(err, category) {
-							_.each(category.products, function(product) {
-								if ((product.categories||[]).indexOf(category._id) === -1) {
-									product.categories.push(category);
-									product.save();
-								}
-							});
-						});
 
 						req.flash('success', 'Resource updated');
 						res.redirect('/categories/' + category.slug);
@@ -300,10 +315,7 @@ exports.delete = function(req, res){
 				central_render(req, res, {
 					status: 500,
 					template: '500',
-					title: '500',
-					addons: {
-						message: 'internal failure'
-					}
+					title: '500'
 				});
 			} else if (category) {
 				category.remove(function (err, category) {
@@ -312,10 +324,7 @@ exports.delete = function(req, res){
 						central_render(req, res, {
 							status: 500,
 							template: '500',
-							title: '500',
-							addons: {
-								message: 'internal failure'
-							}
+							title: '500'
 						});
 					} else {
 						req.flash('success', 'Resource deleted');

@@ -3,4 +3,4 @@ extends _layouts/default
 block content
 	.col-xs-12
 		h2 404
-		p= status
+		p= error ? error.message : message||'Not Found'

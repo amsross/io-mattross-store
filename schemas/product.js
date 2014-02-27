@@ -51,9 +51,6 @@ ProductSchema.plugin(findOrCreate);
 var validateName = function(name) {
 	return !validator.isNull(name) && name.length;
 };
-var validateSlug = function(slug) {
-	return !validator.isNull(slug) && validator.isLength(slug, 1)  && validator.isLowercase(slug);
-};
 var validatePrice = function(price) {
 	return !validator.isNull(price) && validator.isLength(price, 1);
 };
@@ -75,16 +72,13 @@ ProductSchema.pre('save', function(next) {
 
 	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
 
-	if (!validateSlug(that.slug)) {
-		next(new Error('Product slug is required'));
+	if (!validateName(that.name)) {
+		next(new Error('Product name is required'));
 	} else {
 		mongoose.model('Product', ProductSchema)
 			.find({slug: that.slug}, function (err, products) {
 				if (that.isNew && products.length) {
 					next(new Error('Product slug already exists'));
-				}
-				if (!validateName(that.name)) {
-					next(new Error('Product name is required'));
 				}
 				if (!validatePrice(that.price)) {
 					next(new Error('Product price is required'));
@@ -92,6 +86,41 @@ ProductSchema.pre('save', function(next) {
 				next();
 			});
 	}
+
+	// remove this product from any categories no longer in the product.categories array
+	mongoose.models.Category
+		.find({products: { '$in' : [that._id]}}, function (err, categories) {
+			if (err) {
+				console.log(err);
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						error: err,
+						message: 'internal failure'
+					}
+				});
+			} else if (categories) {
+				console.log(categories);
+				_.each(categories, function(category) {
+					if ((that.categories||[]).indexOf(category._id) === -1) {
+						category.products.remove(that);
+						category.save();
+					}
+				});
+			}
+		});
+
+	// add this product to any categories now in the product.categories array
+	that.populate('categories', function(err, that) {
+		_.each(that.categories, function(category) {
+			if ((category.products||[]).indexOf(that._id) === -1) {
+				category.products.push(that);
+				category.save();
+			}
+		});
+	});
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

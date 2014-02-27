@@ -97,6 +97,57 @@ CategorySchema.pre('save', function(next) {
 			next();
 		});
 	}
+
+	// remove this category from the parent_categories property of any category that is no longer in the category.sub_categories array
+	mongoose.models.Category
+		.find({parent_categories: { '$in' : [that._id]}}, function (err, sub_categories) {
+			if (sub_categories) {
+				_.each(sub_categories, function(sub_category) {
+					if ((that.sub_categories||[]).indexOf(sub_category._id) === -1) {
+						sub_category.parent_categories.remove(that);
+						sub_category.save();
+					}
+				});
+			}
+		});
+
+	// add this category to the parent_categories property of any category that is in the category.sub_categories array
+	that.populate('sub_categories', function(err, populated_category) {
+		_.each(populated_category.sub_categories, function(sub_category) {
+			if (!that._id.equals(sub_category._id)) {
+				if ((sub_category.parent_categories||[]).indexOf(that._id) === -1) {
+					sub_category.parent_categories.push(that);
+					sub_category.save();
+				}
+			} else {
+				// prevent recursive referencing
+				that.sub_categories.splice(that.sub_categories.indexOf(sub_category), 1);
+			}
+		});
+	});
+
+	// remove this category from any products no longer in the category.products array
+	mongoose.models.Product
+		.find({categories: { '$in' : [that._id]}}, function (err, products) {
+			if (products) {
+				_.each(products, function(product) {
+					if ((that.products||[]).indexOf(product._id) === -1) {
+						product.categories.remove(that);
+						product.save();
+					}
+				});
+			}
+		});
+
+	// add this category to any products now in the category.products array
+	that.populate('products', function(err, that) {
+		_.each(that.products, function(product) {
+			if ((product.categories||[]).indexOf(that._id) === -1) {
+				product.categories.push(that);
+				product.save();
+			}
+		});
+	});
 });
 
 module.exports = mongoose.model('Category', CategorySchema);
