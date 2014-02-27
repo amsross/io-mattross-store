@@ -18,6 +18,7 @@ var ProductSchema = new Schema({
 		lowercase: true,
 		trim: true
 	},
+	description: String,
 	price: Number,
 	categories: [{
 		type: Schema.Types.ObjectId,

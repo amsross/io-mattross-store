@@ -24,6 +24,7 @@ var CategorySchema = new Schema({
 		lowercase: true,
 		trim: true
 	},
+	description: String,
 	products: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Product'

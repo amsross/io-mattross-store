@@ -1,9 +1,7 @@
-- var is_admin = true
 if category
 	.category.category--large
 		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), enctype='multipart/form-data')
 			.row
-				input(type='hidden', name='category[name]', value=category.name)
 				.col-xs-12.col-md-5.image
 					img.thumbnail.img-responsive(src='//' + category.image_large)
 					if is_admin
@@ -12,28 +10,32 @@ if category
 					.row
 						.col-xs-12
 							h2(contenteditable=is_admin, data-name='category[name]')= category.name
-						.col-xs-12
-							.row
-								if products
-									each product in products
-										label.col-sm-6
-											input(type='checkbox', name='category[products]', value=product._id, checked=(_.pluck(category.products, 'slug').indexOf(product.slug) !== -1))
-											small  
-												= product.name
-						.col-xs-12
-							.row
-								label.col-sm-6
-									input(type='checkbox', name='category[isTopLevel]', value='true', checked=category.isTopLevel)
-									small  Top Level
-						.col-xs-12
-							.row
-								.col-sm-6
-									button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
-								.col-sm-6
-									if category.isNew
-										button.btn.btn-block.btn-info(name='_method', value='POST') create
-									else
-										button.btn.btn-block.btn-info(name='_method', value='PUT') update
+							p(contenteditable=is_admin, data-name='category[description]')= category.description
+						if is_admin
+							input(type='hidden', name='category[name]', value=category.name)
+							input(type='hidden', name='category[description]', value=category.description)
+							.col-xs-12
+								.row
+									if products
+										each product in products
+											label.col-sm-6
+												input(type='checkbox', name='category[products]', value=product._id, checked=(_.pluck(category.products, 'slug').indexOf(product.slug) !== -1))
+												small  
+													= product.name
+							.col-xs-12
+								.row
+									label.col-sm-6
+										input(type='checkbox', name='category[isTopLevel]', value='true', checked=category.isTopLevel)
+										small  Top Level
+							.col-xs-12
+								.row
+									.col-sm-6
+										button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+									.col-sm-6
+										if category.isNew
+											button.btn.btn-block.btn-info(name='_method', value='POST') create
+										else
+											button.btn.btn-block.btn-info(name='_method', value='PUT') update
 		.col-sm-12
 			.row
 				if category.products

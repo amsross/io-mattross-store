@@ -1,7 +1,7 @@
 footer.row
 	.col-xs-12.col-md-8
 		.row
-			.col-xs-12.col-md-3
+			.col-xs-12.col-sm-6.col-md-3
 				h4 Categories
 				ul.list-unstyled
 					li
@@ -14,7 +14,7 @@ footer.row
 						a(href='javascript:;') pork filet
 					li
 						a(href='javascript:;') drumstick landjaeger
-			.col-xs-12.col-md-3
+			.col-xs-12.col-sm-6.col-md-3
 				h4 On The Web
 				ul.list-unstyled
 					li
@@ -35,7 +35,7 @@ footer.row
 						a(href='javascript:;') short loin
 					li
 						a(href='javascript:;') Boudin fatback
-			.col-xs-12.col-md-3
+			.col-xs-12.col-sm-6.col-md-3
 				h4 Info
 				ul.list-unstyled
 					li
@@ -46,30 +46,30 @@ footer.row
 						a(href='javascript:;') pastrami spare
 					li
 						a(href='javascript:;') ribs filet mignon
-			.col-xs-12.col-md-3
+			.col-xs-12.col-sm-6.col-md-3
 				h4 Tools
 				ul.list-unstyled
 					li
 						a(href='javascript:;') Chuck bacon
 					li
 						a(href='javascript:;') jowl fatback
-					li
-						a(href='javascript:;') beef drumstick
-					li
-						a(href='javascript:;') Boudin flank
+					if is_admin
+						li
+							a(href='/admin/off') hide admin
+					else
+						li
+							a(href='/admin/on') show admin
 	.col-xs-12.col-md-4.text-right
 		.row
-			.col-xs-12
-				h4 media
 			.col-xs-12
 				iframe.thumbnail.img-responsive(width='500', height='500', src='//www.youtube.com/embed/TlDnj8RODxY', allowfullscreen)
 			.col-xs-12
 				img.thumbnail.img-responsive(src='http://placehold.it/400x250&text=media')
 
-	.col-md-6.text-left
+	.col-xs-6.text-left
 		a(target='_blank', href='https://github.com/amsross/io-mattross-store')
 			img(alt='on GitHub', src='/img/github.png', width='32', height='32')
-	.col-md-6.text-right
+	.col-xs-6.text-right
 		small
 			| &copy; 
 			a(href='http://mattross.io' target='_blank') mattross.io 

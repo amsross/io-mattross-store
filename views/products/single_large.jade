@@ -1,10 +1,7 @@
-- var is_admin = true
 if product
 	.product.product--large
 		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''), enctype='multipart/form-data')
 			.row
-				input(type='hidden', name='product[name]', value=product.name)
-				input(type='hidden', name='product[price]', value=product.price)
 				.col-xs-12.col-md-5.image
 					img.thumbnail.img-responsive(src='//' + product.image_large)
 					if is_admin
@@ -15,47 +12,54 @@ if product
 							h2(contenteditable=is_admin, data-name='product[name]')= product.name
 						.col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. Price
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[price]')= product.price
+								.col-xs-4.col-md-4. Price
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[price]')= product.price
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. Brand:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[brand]')= product.brand
+								.col-xs-4.col-md-4. Brand:
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[brand]')= product.brand
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. SKU:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[sku]')= product.sku
+								.col-xs-4.col-md-4. SKU:
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[sku]')= product.sku
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. Stock:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[stock]')= product.stock
+								.col-xs-4.col-md-4. Stock:
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[stock]')= product.stock
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. Rating:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[rating]')= xxx
+								.col-xs-4.col-md-4. Shippable:
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[shipping]')= product.shipping
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-5. Shippable:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[shipping]')= product.shipping
-						//- .col-xs-12.col-md-6
-							.row
-								.col-xs-4.col-md-5. Quantity:
-								.col-xs-8.col-md-7(contenteditable=is_admin, data-name='product[quantity]')= product.quantity
+								.col-xs-4.col-md-4. Quantity:
+								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[quantity]')= product.quantity
 						//- .col-xs-12.col-md-6
 							.row
 								.col-xs-12
-									a(href='javascript:;') Write a Review
+									| Rating
+						//- .col-xs-12.col-md-6
+							.row
+								.col-xs-12
+									| Write a Review
+						.col-xs-12
+							p(contenteditable=is_admin, data-name='product[description]')!= product.description
+					if is_admin
+						input(type='hidden', name='product[name]', value=product.name)
+						input(type='hidden', name='product[description]', value=product.description)
+						input(type='hidden', name='product[price]', value=product.price)
+						.row
+							label.col-sm-6
+								input(type='checkbox', name='product[isFeatured]', value='true', checked=product.isFeatured)
+								small  Featured
 					.row
-						label.col-sm-6
-							input(type='checkbox', name='product[isFeatured]', value='true', checked=product.isFeatured)
-							small  Featured
-					.row
-						.col-sm-4
-							button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
-						.col-sm-4
-							if product.isNew
-								button.btn.btn-block.btn-info(name='_method', value='POST') create
-							else
-								button.btn.btn-block.btn-info(name='_method', value='PUT') update
 						.col-sm-4
 								a.btn.btn-block.btn-primary(href='/cart/add/' + product._id) add to cart
+						if is_admin
+							.col-sm-4
+								button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+							.col-sm-4
+								if product.isNew
+									button.btn.btn-block.btn-info(name='_method', value='POST') create
+								else
+									button.btn.btn-block.btn-info(name='_method', value='PUT') update

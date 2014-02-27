@@ -13,6 +13,7 @@ var _ = require('underscore'),
 			category: params.category||null,
 			env: params.env||req.NODE_ENV,
 			flashes: params.flashes||req.flash(),
+			is_admin: req.IS_ADMIN,
 			menu: params.menu||'',
 			message: params.message||'',
 			site_parts: params.site_parts||req.site_parts,
@@ -121,6 +122,7 @@ exports.post = function(req, res){
 
 		product = new ProductSchema();
 		product.set('name', param_product.name);
+		product.set('description', param_product.price);
 		product.set('price', param_product.price);
 		product.set('isFeatured', param_product.isFeatured);
 
@@ -184,6 +186,7 @@ exports.put = function(req, res){
 			} else if (product) {
 
 				product.set('name', param_product.name);
+				product.set('description', param_product.description);
 				product.set('price', param_product.price);
 				product.set('isFeatured', param_product.isFeatured);
 

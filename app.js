@@ -54,6 +54,10 @@ module.exports = function (db) {
 		app.use(function (req, res, next) {
 			// make the environment name available in routes, etc
 			req.NODE_ENV = app.get('env');
+
+			// check if the user has admin privileges
+			req.IS_ADMIN = req.session.IS_ADMIN || false;
+
 			next();
 		});
 
@@ -98,6 +102,14 @@ module.exports = function (db) {
 	};
 
 	app.get('/', site_parts.categories, site_parts.cart, routes.index);
+	app.get('/admin/on', function(req, res) {
+		req.session.IS_ADMIN = true;
+		res.redirect(req.headers.referer);
+	});
+	app.get('/admin/off', function(req, res) {
+		req.session.IS_ADMIN = false;
+		res.redirect(req.headers.referer);
+	});
 
 	app.delete('/products/:slug', site_parts.categories, site_parts.cart, products.delete);
 	app.get('/products/new/?', site_parts.categories, site_parts.cart, products.new);

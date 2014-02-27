@@ -13,6 +13,7 @@ var _ = require('underscore'),
 			category: params.category||null,
 			env: params.env||req.NODE_ENV,
 			flashes: params.flashes||req.flash(),
+			is_admin: req.IS_ADMIN,
 			menu: params.menu||'',
 			message: params.message||'',
 			site_parts: params.site_parts||req.site_parts,
@@ -141,8 +142,9 @@ exports.post = function(req, res){
 	if (param_category) {
 
 		category = new CategorySchema();
-		category.name = param_category.name;
-		category.isTopLevel = param_category.isTopLevel;
+		category.set('name', param_category.name);
+		category.set('description', param_category.description);
+		category.set('isTopLevel', param_category.isTopLevel);
 
 		central_upload(req, category);
 
@@ -202,9 +204,10 @@ exports.put = function(req, res){
 				});
 			} else if (category) {
 
-				category.name = param_category.name;
-				category.isTopLevel = param_category.isTopLevel;
-				category.products = param_category.products;
+				category.set('name', param_category.name);
+				category.set('description', param_category.description);
+				category.set('isTopLevel', param_category.isTopLevel);
+				category.set('products', param_category.products);
 
 				central_upload(req, category);
 
