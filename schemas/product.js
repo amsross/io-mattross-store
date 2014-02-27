@@ -90,18 +90,7 @@ ProductSchema.pre('save', function(next) {
 	// remove this product from any categories no longer in the product.categories array
 	mongoose.models.Category
 		.find({products: { '$in' : [that._id]}}, function (err, categories) {
-			if (err) {
-				console.log(err);
-				central_render(req, res, {
-					status: 500,
-					template: '500',
-					title: '500',
-					addons: {
-						error: err,
-						message: 'internal failure'
-					}
-				});
-			} else if (categories) {
+			if (categories) {
 				console.log(categories);
 				_.each(categories, function(category) {
 					if ((that.categories||[]).indexOf(category._id) === -1) {
