@@ -22,6 +22,12 @@ header.row
 				p.navbar-text.navbar-right
 					a(href='/cart').label.label-primary In Cart: 
 						= '$' + site_parts.cart.total
+			form.navbar-form(role='search', action='/search')
+				.input-group
+					input.form-control(type='text', class='form-control', placeholder='Search')
+					span.input-group-btn
+						button.btn.btn-default(type='submit')
+							span.glyphicon.glyphicon-search
 	if flashes
 		.col-xs-12
 			include flashes

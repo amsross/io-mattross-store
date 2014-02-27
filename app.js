@@ -128,6 +128,9 @@ module.exports = function (db) {
 		req.session.IS_ADMIN = false;
 		res.redirect(req.headers.referer);
 	});
+	app.get('/search', function(req, res) {
+		res.redirect(req.headers.referer);
+	});
 
 	app.delete('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.delete);
 	app.get('/products/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.new);
