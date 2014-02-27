@@ -70,7 +70,7 @@ module.exports = function (db) {
 
 	var site_parts = {};
 
-	site_parts.categories = function (req, res, next) {
+	site_parts.top_categories = function (req, res, next) {
 		req.site_parts = req.site_parts||{};
 
 		CategorySchema
@@ -80,7 +80,24 @@ module.exports = function (db) {
 				if (err) {
 					console.log(err);
 				} else {
-					req.site_parts.categories = categories;
+					req.site_parts.top_categories = categories;
+				}
+				next();
+			});
+	};
+
+	site_parts.top_products = function (req, res, next) {
+		req.site_parts = req.site_parts||{};
+
+		ProductSchema
+			.find({isFeatured: true})
+			.limit(4)
+			.sort({ sort: 1, name: 1 })
+			.exec(function(err, products) {
+				if (err) {
+					console.log(err);
+				} else {
+					req.site_parts.top_products = products;
 				}
 				next();
 			});
@@ -101,7 +118,7 @@ module.exports = function (db) {
 		next();
 	};
 
-	app.get('/', site_parts.categories, site_parts.cart, routes.index);
+	app.get('/', site_parts.top_categories, site_parts.top_products, site_parts.cart, routes.index);
 	app.get('/admin/on', function(req, res) {
 		req.session.IS_ADMIN = true;
 		res.redirect(req.headers.referer);
@@ -111,22 +128,22 @@ module.exports = function (db) {
 		res.redirect(req.headers.referer);
 	});
 
-	app.delete('/products/:slug', site_parts.categories, site_parts.cart, products.delete);
-	app.get('/products/new/?', site_parts.categories, site_parts.cart, products.new);
-	app.get('/products/?:slug', site_parts.categories, site_parts.cart, products.get);
-	app.post('/products/?', site_parts.categories, site_parts.cart, products.post);
-	app.put('/products/:slug', site_parts.categories, site_parts.cart, products.put);
+	app.delete('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.delete);
+	app.get('/products/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.new);
+	app.get('/products/?:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
+	app.post('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.post);
+	app.put('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.put);
 
-	app.delete('/categories/:slug', site_parts.categories, site_parts.cart, categories.delete);
-	app.get('/categories/new/?', site_parts.categories, site_parts.cart, categories.new);
-	app.get('/categories/?:slug', site_parts.categories, site_parts.cart, categories.get);
-	app.post('/categories/?', site_parts.categories, site_parts.cart, categories.post);
-	app.put('/categories/:slug', site_parts.categories, site_parts.cart, categories.put);
+	app.delete('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.delete);
+	app.get('/categories/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.new);
+	app.get('/categories/?:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
+	app.post('/categories/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.post);
+	app.put('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.put);
 
-	app.get('/cart/?', site_parts.categories, site_parts.cart, cart.get);
-	app.get('/cart/add/?:_id', site_parts.categories, site_parts.cart, cart.add);
-	app.get('/cart/remove/?:_id', site_parts.categories, site_parts.cart, cart.remove);
-	// app.post('/cart/?:_id', site_parts.categories, site_parts.cart, cart.post);
+	app.get('/cart/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.get);
+	app.get('/cart/add/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.add);
+	app.get('/cart/remove/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.remove);
+	// app.post('/cart/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.post);
 
 	return app;
 };

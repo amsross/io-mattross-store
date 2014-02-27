@@ -13,8 +13,8 @@ header.row
 			ul.nav.navbar-nav
 				li(class=(menu === 'home' ? 'active' : ''))
 					a(href='/') Home
-				if site_parts && site_parts.categories
-					each category in site_parts.categories
+				if site_parts && site_parts.top_categories
+					each category in site_parts.top_categories
 						li(class=(menu === category.slug ? 'active' : ''))
 							a(href='/categories/' + category.slug)
 								= category.name

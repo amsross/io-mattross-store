@@ -4,16 +4,18 @@ footer.row
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Categories
 				ul.list-unstyled
-					li
-						a(href='javascript:;') Beef ribs tongue
-					li
-						a(href='javascript:;') sirloin brisket
-					li
-						a(href='javascript:;') hock meatball
-					li
-						a(href='javascript:;') pork filet
-					li
-						a(href='javascript:;') drumstick landjaeger
+					if site_parts && site_parts.top_categories
+						each category in site_parts.top_categories
+							li
+								a(href='/categories/' + category.slug)
+									= category.name
+				h4 Featured Products
+				ul.list-unstyled
+					if site_parts && site_parts.top_products
+						each product in site_parts.top_products
+							li
+								a(href='/products/' + product.slug)
+									= product.name
 			.col-xs-12.col-sm-6.col-md-3
 				h4 On The Web
 				ul.list-unstyled
@@ -50,15 +52,15 @@ footer.row
 				h4 Tools
 				ul.list-unstyled
 					li
-						a(href='javascript:;') Chuck bacon
+						a(href='javascript:;') My Account
 					li
-						a(href='javascript:;') jowl fatback
+						a(href='/cart') Shopping Cart
 					if is_admin
 						li
-							a(href='/admin/off') hide admin
+							a(href='/admin/off') Hide Admin
 					else
 						li
-							a(href='/admin/on') show admin
+							a(href='/admin/on') Show Admin
 	.col-xs-12.col-md-4.text-right
 		.row
 			.col-xs-12
