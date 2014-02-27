@@ -84,6 +84,7 @@ module.exports = function(grunt) {
 						'private/bower_components/bootstrap/js/transition.js',
 						'private/bower_components/bootstrap/js/alert.js',
 						'private/bower_components/bootstrap/js/carousel.js',
+						'private/bower_components/bootstrap/js/dropdown.js',
 						// 'private/bower_components/momentjs/moment.js',
 						'private/js/app.js'
 					]

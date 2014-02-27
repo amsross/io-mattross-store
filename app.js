@@ -6,6 +6,7 @@ module.exports = function (db) {
 	 * Module dependencies.
 	 */
 	var express = require('express'),
+		_ = require('underscore'),
 		cart = require('./routes/cart'),
 		categories = require('./routes/categories'),
 		CategorySchema = require('./schemas/category'),
@@ -67,7 +68,6 @@ module.exports = function (db) {
 
 	app.locals._ = require('underscore');
 
-
 	var site_parts = {};
 
 	site_parts.top_categories = function (req, res, next) {
@@ -76,7 +76,9 @@ module.exports = function (db) {
 		CategorySchema
 			.find({isTopLevel: true})
 			.limit(5)
-			.sort({ sort: 1, name: 1 })
+			.populate('child_categories')
+			// .sort({ sort: 1, name: 1 })
+			.sort({ name: 1 })
 			.exec(function(err, categories) {
 				if (err) {
 					console.log(err);
@@ -93,7 +95,8 @@ module.exports = function (db) {
 		ProductSchema
 			.find({isFeatured: true})
 			.limit(5)
-			.sort({ sort: 1, name: 1 })
+			// .sort({ sort: 1, name: 1 })
+			.sort({ name: 1 })
 			.exec(function(err, products) {
 				if (err) {
 					console.log(err);

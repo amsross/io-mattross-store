@@ -51,16 +51,16 @@ footer.row
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Tools
 				ul.list-unstyled
+					if is_admin
+						li
+							a(href='/admin/off') Logout
+					else
+						li
+							a(href='/admin/on') Login
 					li
 						a(href='javascript:;') My Account
 					li
 						a(href='/cart') Shopping Cart
-					if is_admin
-						li
-							a(href='/admin/off') Hide Admin
-					else
-						li
-							a(href='/admin/on') Show Admin
 	.col-xs-12.col-md-4.text-right
 		.row
 			.col-xs-12

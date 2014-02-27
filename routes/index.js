@@ -2,7 +2,6 @@
  * Module dependencies
  */
 var _ = require('underscore'),
-	CategorySchema = require('../schemas/category'),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -32,12 +31,13 @@ exports.index = function(req, res){
 		.exec(function(err, products) {
 			if (err) {
 				console.log(err);
-				res.status(500).render('500', {
-					site_parts: req.site_parts,
-					flashes: req.flash(),
-					env: req.NODE_ENV,
-					status: 'internal failure',
-					error: err
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						error: err
+					}
 				});
 			} else {
 				central_render(req, res, {

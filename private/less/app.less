@@ -1,7 +1,26 @@
 @import "/private/bower_components/bootstrap/less/bootstrap.less";
 
 body {
-	padding-top: @grid-gutter-width;
+	padding-top: @grid-gutter-width / 2;
+	padding-bottom: @grid-gutter-width / 2;
+}
+
+header {
+	.brand {
+		float: left;
+		margin-left: @grid-gutter-width / 2;
+		margin-bottom: @grid-gutter-width / 2;
+	}
+	.nav {
+		&.pull-right {
+			clear: right;
+			> li {
+				> a {
+					padding: 5px 10px;
+				}
+			}
+		}
+	}
 }
 
 

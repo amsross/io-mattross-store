@@ -2,8 +2,21 @@
  * Module dependencies
  */
 var ProductSchema = require('../schemas/product'),
-	ObjectId = require('mongoose').Types.ObjectId,
-	_ = require('underscore');
+	_ = require('underscore'),
+	central_render = function(req, res, params) {
+		'use strict';
+		res.status(params.status||200).render(params.template||'', _.extend({
+			body_class: params.body_class||'',
+			category: params.category||null,
+			env: params.env||req.NODE_ENV,
+			flashes: params.flashes||req.flash(),
+			is_admin: req.IS_ADMIN,
+			menu: params.menu||'',
+			message: params.message||'',
+			site_parts: params.site_parts||req.site_parts,
+			title: params.title ? params.title + ' &raquo; ' : ''
+		}, params.addons));
+	};
 
 /*
  * GET the cart page
@@ -32,13 +45,12 @@ exports.get = function(req, res){
 	}
 	req.session.total = displayCart.total = total.toFixed(2);
 
-	res.render('cart/get', {
-		site_parts: req.site_parts,
-		flashes: req.flash(),
-		env: req.NODE_ENV,
-		title: 'Products',
-		menu: 'products products_edit',
-		cart: displayCart
+	central_render(req, res, {
+		template: 'cart/get',
+		title: 'Cart',
+		addons: {
+			cart: displayCart
+		}
 	});
 };
 
@@ -82,13 +94,11 @@ exports.add = function(req, res){
 			res.redirect('/cart');
 		});
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			message: 'Resource not provided'
 		});
 	}
 };
@@ -112,13 +122,11 @@ exports.remove = function(req, res){
 		// display the cart for the user
 		res.redirect('/cart');
 	} else {
-		res.status(500).render('500', {
-			site_parts: req.site_parts,
-			flashes: req.flash(),
-			env: req.NODE_ENV,
+		central_render(req, res, {
+			status: 500,
+			template: '500',
 			title: '500',
-			status: 'Resource not provided',
-			error: null
+			message: 'Resource not provided'
 		});
 	}
 };

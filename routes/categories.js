@@ -108,73 +108,77 @@ exports.get = function(req, res){
 	var param_slug = req.param('slug'),
 		record;
 
-	record = CategorySchema.findOne({'slug': param_slug}).populate('products').exec( function (err, category) {
-		if (err) {
-			console.log(err);
-			central_render(req, res, {
-				status: 500,
-				template: '500',
-				title: '500',
-				addons: {
-					error: err
-				}
-			});
-		} else if (category) {
-
-			// get all the products that can be added to this category
-			require('../schemas/product').find()
-				.exec(function(err, products) {
-					if (err) {
-						console.log(err);
-						central_render(req, res, {
-							status: 500,
-							template: '500',
-							title: '500',
-							addons: {
-								error: err
-							}
-						});
-					} else {
-						// get all the categories that can be added as child_categories
-						require('../schemas/category').find()
-							.exec(function(err, categories) {
-								if (err) {
-									console.log(err);
-									central_render(req, res, {
-										status: 500,
-										template: '500',
-										title: '500',
-										addons: {
-											error: err
-										}
-									});
-								} else {
-									central_render(req, res, {
-										body_class: 'categories categories_edit',
-										menu: category.slug,
-										template: 'categories/edit',
-										title: 'Categories',
-										addons: {
-											categories: categories,
-											category: category,
-											products: products
-										}
-									});
-								}
-							});
+	record = CategorySchema.findOne({'slug': param_slug}).
+		populate('products')
+		.exec( function (err, category) {
+			if (err) {
+				console.log(err);
+				central_render(req, res, {
+					status: 500,
+					template: '500',
+					title: '500',
+					addons: {
+						error: err
 					}
 				});
-		} else {
-			central_render(req, res, {
-				status: 404,
-				template: '404',
-				title: '404',
-				addons: {
-					message: 'The specified resource could not be found'
-				}
-			});
-		}
-	});
+			} else if (category) {
+
+				// get all the products that can be added to this category
+				require('../schemas/product').find()
+					.sort({ name: 1 })
+					.exec(function(err, products) {
+						if (err) {
+							console.log(err);
+							central_render(req, res, {
+								status: 500,
+								template: '500',
+								title: '500',
+								addons: {
+									error: err
+								}
+							});
+						} else {
+							// get all the categories that can be added as child_categories
+							require('../schemas/category').find()
+								.sort({ name: 1 })
+								.exec(function(err, categories) {
+									if (err) {
+										console.log(err);
+										central_render(req, res, {
+											status: 500,
+											template: '500',
+											title: '500',
+											addons: {
+												error: err
+											}
+										});
+									} else {
+										central_render(req, res, {
+											body_class: 'categories categories_edit',
+											menu: category.slug,
+											template: 'categories/edit',
+											title: 'Categories',
+											addons: {
+												categories: categories,
+												category: category,
+												products: products
+											}
+										});
+									}
+								});
+						}
+					});
+			} else {
+				central_render(req, res, {
+					status: 404,
+					template: '404',
+					title: '404',
+					addons: {
+						message: 'The specified resource could not be found'
+					}
+				});
+			}
+		});
 };
 
 /*

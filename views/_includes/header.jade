@@ -1,13 +1,37 @@
 header.row
-	//- .col-xs-12.col-md-6.text-left
+	.brand
 		a(href='/')
-			.well.well-sm brand
-	//- .col-xs-12.col-md-6.text-right
-		ul.nav.nav-pills
-			if site_parts && site_parts.cart && site_parts.cart.total
-				li.pull-right
-					a(href='/cart').label.label-primary
-						= '$' + site_parts.cart.total
+				img.img-responsive(src='//placehold.it/335x75&text=Brand')
+	ul.nav.nav-pills.pull-right
+		li
+			a.small(href='/') Home
+		li.disabled
+			a.small(href='javascript:;') Blog
+		li.disabled
+			a.small(href='javascript:;') Forums
+		li.disabled
+			a.small(href='javascript:;') FAQ
+		li.disabled
+			a.small(href='javascript:;') News
+		li.disabled
+			a.small(href='javascript:;') About
+		li.disabled
+			a.small(href='javascript:;') Contact
+	ul.nav.nav-pills.pull-right
+		if is_admin
+			li
+				a.small(href='/admin/off') Logout
+		else
+			li
+				a.small(href='/admin/on') Login
+		if site_parts && site_parts.cart && site_parts.cart.total
+			li
+				a.small(href='/cart') Shopping Cart (
+					= '$' + site_parts.cart.total
+					| )
+		if site_parts && site_parts.cart && site_parts.cart.total
+			li.disabled
+				a.small(href='javascript:;') Checkout
 	.col-xs-12
 		.navbar.navbar-default.navbar-static-top(role='navigation')
 			ul.nav.navbar-nav
@@ -15,9 +39,21 @@ header.row
 					a(href='/') Home
 				if site_parts && site_parts.top_categories
 					each category in site_parts.top_categories
-						li(class=(menu === category.slug ? 'active' : ''))
-							a(href='/categories/' + category.slug)
+						li(class=(menu === category.slug ? 'active' : ''), class=category.child_categories ? 'dropdown' : '')
+							a(href='/categories/' + category.slug, class=category.child_categories ? 'dropdown-toggle' : '', data-toggle=category.child_categories ? 'dropdown' : '')
 								= category.name
+								if category.child_categories
+									|  
+									b.caret
+							if category.child_categories
+								ul.dropdown-menu
+									li
+										a(href='/categories/' + category.slug)
+											= category.name
+									each child_category in category.child_categories
+										li
+											a(href='/categories/' + child_category.slug)
+												= child_category.name
 			if site_parts && site_parts.cart && site_parts.cart.total
 				p.navbar-text.navbar-right
 					a(href='/cart').label.label-primary In Cart: 
