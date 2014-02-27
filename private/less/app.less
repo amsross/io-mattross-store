@@ -25,7 +25,6 @@ form.contenteditable {
 	&.product--small {
 		.product-name {
 			text-align: center;
-			// min-height: (@line-height-base * 2em)
 		}
 		.product-image {
 			.thumbnail {
@@ -37,6 +36,15 @@ form.contenteditable {
 		}
 	}
 	&.product--large {
+		.product--sortable-categories {
+			.form-control();
+			cursor: default;
+			height: auto;
+			li{
+				cursor: pointer;
+				list-style: none;
+			}
+		}
 	}
 }
 
@@ -46,7 +54,6 @@ form.contenteditable {
 	&.category--small {
 		.category-name {
 			text-align: center;
-			// min-height: (@line-height-base * 2em)
 		}
 		.category-image {
 			.thumbnail {
@@ -55,5 +62,14 @@ form.contenteditable {
 		}
 	}
 	&.category--large {
+		.category--sortable-products {
+			.form-control();
+			cursor: default;
+			height: auto;
+			li{
+				cursor: pointer;
+				list-style: none;
+			}
+		}
 	}
 }

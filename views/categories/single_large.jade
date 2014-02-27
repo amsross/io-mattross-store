@@ -10,18 +10,25 @@ if category
 					.row
 						.col-xs-12
 							h2(contenteditable=is_admin, data-name='category[name]')= category.name
+						.col-xs-12
 							p(contenteditable=is_admin, data-name='category[description]')= category.description
 						if is_admin
-							input(type='hidden', name='category[name]', value=category.name)
-							input(type='hidden', name='category[description]', value=category.description)
 							.col-xs-12
 								.row
-									if products
-										each product in products
-											label.col-sm-6
-												input(type='checkbox', name='category[products]', value=product._id, checked=(_.pluck(category.products, 'slug').indexOf(product.slug) !== -1))
-												small  
-													= product.name
+									.col-sm-6
+										h5 Available Products
+										ul.unstyled.sortable.category--sortable-products(data-name='unused_products')
+											if products
+												each product in products
+													if (_.pluck(category.products, 'slug').indexOf(product.slug) === -1)
+														li(value=product._id)= product.name
+									.col-sm-6
+										h5 Included Products
+										ul.unstyled.sortable.category--sortable-products(contenteditable=is_admin, data-name='category[products][]')
+											if products
+												each product in products
+													if (_.pluck(category.products, 'slug').indexOf(product.slug) !== -1)
+														li(value=product._id)= product.name
 							.col-xs-12
 								.row
 									label.col-sm-6

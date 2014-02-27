@@ -18,7 +18,13 @@ var io_mattross_store = {
 				_.each(inputs, function(input){
 					input_name = $(input).data('name');
 					input_text = $(input).text();
-					$(that).find('[name="' + input_name + '"]').val(input_text);
+					if (input_name.indexOf('[]') === input_name.length-2) {
+						_.each($(input).children(), function(child) {
+							$(that).prepend('<input type="hidden" name="' + input_name.replace(/\[\]$/,'') + '" value="' + $(child).attr('value') + '" />');
+						});
+					} else {
+						$(that).prepend('<input type="hidden" name="' + input_name + '" value="' + input_text + '" />');
+					}
 				});
 
 				that.submit();
@@ -30,10 +36,18 @@ var io_mattross_store = {
 		init: function() {}
 	},
 	products_edit: {
-		init: function() {}
+		init: function() {
+			$('.sortable').sortable({
+				connectWith: '.product--sortable-categories'
+			}).disableSelection();
+		}
 	},
 	categories_edit: {
-		init: function() {}
+		init: function() {
+			$('.sortable').sortable({
+				connectWith: '.category--sortable-products'
+			}).disableSelection();
+		}
 	}
 };
 

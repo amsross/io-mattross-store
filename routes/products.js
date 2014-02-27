@@ -87,14 +87,33 @@ exports.get = function(req, res){
 				}
 			});
 		} else if (product) {
-			central_render(req, res, {
-				body_class: 'products products_edit',
-				template: 'products/edit',
-				title: 'Products',
-				addons: {
-					product: product
-				}
-			});
+
+			require('../schemas/category').find()
+				.exec(function(err, categories) {
+					if (err) {
+						console.log(err);
+						central_render(req, res, {
+							body_class: 'products products_edit',
+							status: 500,
+							template: '500',
+							title: '500',
+							addons: {
+								error: err,
+								message: 'internal failure'
+							}
+						});
+					} else {
+						central_render(req, res, {
+							body_class: 'products products_edit',
+							template: 'products/edit',
+							title: 'Products',
+							addons: {
+								categories: categories,
+								product: product
+							}
+						});
+					}
+				});
 		} else {
 			central_render(req, res, {
 				status: 404,
@@ -189,6 +208,7 @@ exports.put = function(req, res){
 				product.set('description', param_product.description);
 				product.set('price', param_product.price);
 				product.set('isFeatured', param_product.isFeatured);
+				product.set('categories', param_product.categories);
 
 				central_upload(req, product);
 
@@ -205,6 +225,42 @@ exports.put = function(req, res){
 							}
 						});
 					} else {
+
+						// remove this product from any categories no longer in the product.categories array
+						CategorySchema
+							.find({products: { '$in' : [product._id]}}, function (err, categories) {
+								if (err) {
+									console.log(err);
+									central_render(req, res, {
+										status: 500,
+										template: '500',
+										title: '500',
+										addons: {
+											error: err,
+											message: 'internal failure'
+										}
+									});
+								} else if (categories) {
+									console.log(categories);
+									_.each(categories, function(category) {
+										if ((product.categories||[]).indexOf(category._id) === -1) {
+											category.products.remove(product);
+											category.save();
+										}
+									});
+								}
+							});
+
+						// add this product to any categories now in the product.categories array
+						product.populate('categories', function(err, product) {
+							_.each(product.categories, function(category) {
+								if ((category.products||[]).indexOf(product._id) === -1) {
+									category.products.push(product);
+									category.save();
+								}
+							});
+						});
+
 						req.flash('success', 'Resource updated');
 						res.redirect('/products/' + product.slug);
 					}

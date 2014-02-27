@@ -44,14 +44,29 @@ if product
 									| Write a Review
 						.col-xs-12
 							p(contenteditable=is_admin, data-name='product[description]')!= product.description
-					if is_admin
-						input(type='hidden', name='product[name]', value=product.name)
-						input(type='hidden', name='product[description]', value=product.description)
-						input(type='hidden', name='product[price]', value=product.price)
-						.row
-							label.col-sm-6
-								input(type='checkbox', name='product[isFeatured]', value='true', checked=product.isFeatured)
-								small  Featured
+						if is_admin
+							.col-xs-12
+								.row
+									- console.log(product.categories)
+									.col-sm-6
+										h5 Unselected Categories
+										ul.unstyled.sortable.product--sortable-categories(data-name='unused_categories')
+											if categories
+												each category in categories
+													if (product.categories.indexOf(category._id) === -1)
+														li(value=category._id)= category.name
+									.col-sm-6
+										h5 Selected Categories
+										ul.unstyled.sortable.product--sortable-categories(contenteditable=is_admin, data-name='product[categories][]')
+											if categories
+												each category in categories
+													if (product.categories.indexOf(category._id) !== -1)
+														li(value=category._id)= category.name
+							.col-xs-12
+								.row
+									label.col-sm-6
+										input(type='checkbox', name='product[isFeatured]', value='true', checked=product.isFeatured)
+										small  Featured
 					.row
 						.col-sm-4
 								a.btn.btn-block.btn-primary(href='/cart/add/' + product._id) add to cart

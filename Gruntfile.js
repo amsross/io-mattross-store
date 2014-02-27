@@ -78,6 +78,9 @@ module.exports = function(grunt) {
 					'public/js/scripts.min.js': [
 						'private/bower_components/jquery/dist/jquery.js',
 						'private/bower_components/underscore/underscore.js',
+						'private/bower_components/jquery-ui/ui/jquery-ui.js',
+						'private/bower_components/jquery-ui/ui/widget.js',
+						'private/bower_components/jquery-ui/ui/mouse.js',
 						'private/bower_components/bootstrap/js/transition.js',
 						'private/bower_components/bootstrap/js/alert.js',
 						'private/bower_components/bootstrap/js/carousel.js',
