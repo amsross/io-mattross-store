@@ -68,7 +68,7 @@ exports.new = function(req, res){
 					}
 				});
 			} else {
-				// get all the categories that can be added as sub_categories
+				// get all the categories that can be added as child_categories
 				require('../schemas/category').find()
 					.exec(function(err, categories) {
 						if (err) {
@@ -135,7 +135,7 @@ exports.get = function(req, res){
 							}
 						});
 					} else {
-						// get all the categories that can be added as sub_categories
+						// get all the categories that can be added as child_categories
 						require('../schemas/category').find()
 							.exec(function(err, categories) {
 								if (err) {
@@ -195,7 +195,7 @@ exports.post = function(req, res){
 		category.set('isTopLevel', param_category.isTopLevel);
 		category.set('name', param_category.name);
 		category.set('products', param_category.products);
-		category.set('sub_categories', param_category.sub_categories);
+		category.set('child_categories', param_category.child_categories);
 
 		central_upload(req, category);
 
@@ -253,11 +253,18 @@ exports.put = function(req, res){
 				});
 			} else if (category) {
 
+				// param_category.child_categories.splice(param_category.child_categories.indexOf(category._id), 1);
+				// console.log(param_category.child_categories);
+
 				category.set('description', param_category.description);
 				category.set('isTopLevel', param_category.isTopLevel);
 				category.set('name', param_category.name);
 				category.set('products', param_category.products);
-				category.set('sub_categories', param_category.sub_categories);
+				category.set('child_categories', param_category.child_categories);
+
+				if (category.child_categories && category.child_categories.indexOf(category._id) !== -1) {
+					category.child_categories.splice(category.child_categories.indexOf(category._id), 1);
+				}
 
 				central_upload(req, category);
 

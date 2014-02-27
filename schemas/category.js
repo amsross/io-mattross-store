@@ -33,7 +33,7 @@ var CategorySchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: 'Category'
 	}],
-	sub_categories: [{
+	child_categories: [{
 		type: Schema.Types.ObjectId,
 		ref: 'Category'
 	}],
@@ -98,30 +98,27 @@ CategorySchema.pre('save', function(next) {
 		});
 	}
 
-	// remove this category from the parent_categories property of any category that is no longer in the category.sub_categories array
+	// remove this category from the parent_categories property of any category that is no longer in the category.child_categories array
 	mongoose.models.Category
-		.find({parent_categories: { '$in' : [that._id]}}, function (err, sub_categories) {
-			if (sub_categories) {
-				_.each(sub_categories, function(sub_category) {
-					if ((that.sub_categories||[]).indexOf(sub_category._id) === -1) {
-						sub_category.parent_categories.remove(that);
-						sub_category.save();
+		.find({parent_categories: { '$in' : [that._id]}}, function (err, child_categories) {
+			if (child_categories) {
+				_.each(child_categories, function(child_category) {
+					if ((that.child_categories||[]).indexOf(child_category._id) === -1) {
+						child_category.parent_categories.remove(that);
+						child_category.save();
 					}
 				});
 			}
 		});
 
-	// add this category to the parent_categories property of any category that is in the category.sub_categories array
-	that.populate('sub_categories', function(err, populated_category) {
-		_.each(populated_category.sub_categories, function(sub_category) {
-			if (!that._id.equals(sub_category._id)) {
-				if ((sub_category.parent_categories||[]).indexOf(that._id) === -1) {
-					sub_category.parent_categories.push(that);
-					sub_category.save();
+	// add this category to the parent_categories property of any category that is in the category.child_categories array
+	that.populate('child_categories', function(err, populated_category) {
+		_.each(populated_category.child_categories, function(child_category) {
+			if (!that._id.equals(child_category._id)) {
+				if ((child_category.parent_categories||[]).indexOf(that._id) === -1) {
+					child_category.parent_categories.push(that);
+					child_category.save();
 				}
-			} else {
-				// prevent recursive referencing
-				that.sub_categories.splice(that.sub_categories.indexOf(sub_category), 1);
 			}
 		});
 	});

@@ -32,18 +32,18 @@ if category
 							.col-xs-12
 								.row
 									.col-sm-6
-										h5 Available Sub Categories
+										h5 Available Child Categories
 										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories')
 											if categories
 												each a_category in categories
-													if (category.sub_categories.indexOf(a_category._id) === -1)
+													if (category.child_categories.indexOf(a_category._id) === -1)
 														li(value=a_category._id)= a_category.name
 									.col-sm-6
-										h5 Selected Sub Categories
-										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories', contenteditable=is_admin, data-name='category[sub_categories][]')
+										h5 Selected Child Categories
+										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories', contenteditable=is_admin, data-name='category[child_categories][]')
 											if categories
 												each a_category in categories
-													if (category.sub_categories.indexOf(a_category._id) !== -1)
+													if (category.child_categories.indexOf(a_category._id) !== -1)
 														li(value=a_category._id)= a_category.name
 							.col-xs-12
 								.row
