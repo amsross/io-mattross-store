@@ -26,6 +26,14 @@ var ProductSchema = new Schema({
 	isFeatured: {
 		type: Boolean,
 		default: false
+	},
+	image_large: {
+		type: String,
+		default: 'placehold.it/500&text=No Large Image'
+	},
+	image_small: {
+		type: String,
+		default: 'placehold.it/200&text=No Small Image'
 	}
 });
 

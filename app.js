@@ -11,6 +11,8 @@ module.exports = function (db) {
 		CategorySchema = require('./schemas/category'),
 		flash = require('connect-flash'),
 		MongoStore = require('connect-mongo')(express),
+		multipart = require('connect-multiparty'),
+		multiparty = multipart(),
 		path = require('path'),
 		products = require('./routes/products'),
 		ProductSchema = require('./schemas/product'),
@@ -42,6 +44,7 @@ module.exports = function (db) {
 		app.use(express.logger('dev'));
 		app.use(express.json());
 		app.use(express.urlencoded());
+		app.use(multiparty);
 		app.use(express.methodOverride());
 
 		app.use(function (req, res, next) {

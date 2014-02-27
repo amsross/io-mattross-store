@@ -1,12 +1,14 @@
 - var is_admin = true
 if product
 	.product.product--large
-		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''))
+		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''), enctype='multipart/form-data')
 			.row
 				input(type='hidden', name='product[name]', value=product.name)
 				input(type='hidden', name='product[price]', value=product.price)
 				.col-xs-12.col-md-5.image
-					img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
+					img.thumbnail.img-responsive(src='//' + product.image_large)
+					if is_admin
+						input.col-xs-12(type='file', name='image_large')
 				.col-xs-12.col-md-7.info
 					.row
 						.col-xs-12

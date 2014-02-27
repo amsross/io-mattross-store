@@ -3,6 +3,8 @@
  */
 var _ = require('underscore'),
 	CategorySchema = require('../schemas/category'),
+	formData = require('form-data'),
+	fs = require('fs'),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -16,6 +18,31 @@ var _ = require('underscore'),
 			site_parts: params.site_parts||req.site_parts,
 			title: params.title ? params.title + ' &raquo; ' : ''
 		}, params.addons));
+	},
+	central_upload = function(req, product) {
+		'use strict';
+		if (req.files && req.files.image_large && req.files.image_large.size) {
+			var form = new formData();
+			form.append('key', process.env.IMAGESHACK_API);
+			form.append('fileupload', fs.createReadStream(req.files.image_large.path));
+			form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+				// res – response object (http.IncomingMessage)
+				res.setEncoding('utf8');
+				res.on('data', function(data) {
+					data = JSON.parse(data);
+					if (data.success && data.result && data.result.images && data.result.images.length) {
+						product.set('image_large', (_.first(data.result.images)||{}).direct_link);
+						product.set('image_small', (_.first(data.result.images)||{}).direct_link);
+						product.save();
+					}
+				});
+				if (!err) {
+					res.resume(); // for node-0.10.x
+				} else {
+					console.log(err);
+				}
+			});
+		}
 	};
 
 /*
@@ -28,7 +55,7 @@ exports.new = function(req, res){
 
 	central_render(req, res, {
 		body_class: 'products products_edit',
-		message: 'internal failure',
+		message: 'Internal failure',
 		template: 'products/edit',
 		title: 'Products',
 		addons: {
@@ -55,7 +82,7 @@ exports.get = function(req, res){
 				title: '500',
 				addons: {
 					error: err,
-					message: 'internal failure'
+					message: 'Internal failure'
 				}
 			});
 		} else if (product) {
@@ -86,14 +113,18 @@ exports.get = function(req, res){
 exports.post = function(req, res){
 	'use strict';
 
-	var param_product = req.param('product'),
+	var
+		param_product = req.param('product'),
 		product;
 
 	if (param_product) {
+
 		product = new ProductSchema();
-		product.name = param_product.name;
-		product.price = param_product.price;
-		product.isFeatured = param_product.isFeatured;
+		product.set('name', param_product.name);
+		product.set('price', param_product.price);
+		product.set('isFeatured', param_product.isFeatured);
+
+		central_upload(req, product);
 
 		product.save(function (err, product) {
 			if (err) {
@@ -104,7 +135,7 @@ exports.post = function(req, res){
 					title: '500',
 					addons: {
 						error: err,
-						message: 'internal failure'
+						message: 'Internal failure'
 					}
 				});
 			} else {
@@ -130,9 +161,12 @@ exports.post = function(req, res){
 exports.put = function(req, res){
 	'use strict';
 
-	var param_slug = req.param('slug'),
+	var
+		form = new formData(),
 		param_product = req.param('product'),
-		record;
+		param_slug = req.param('slug'),
+		record
+		;
 
 	if (param_product) {
 		record = ProductSchema.findOne({'slug': param_slug}, function (err, product) {
@@ -144,13 +178,16 @@ exports.put = function(req, res){
 					title: '500',
 					addons: {
 						error: err,
-						message: 'internal failure'
+						message: 'Internal failure'
 					}
 				});
 			} else if (product) {
-				product.name = param_product.name;
-				product.price = param_product.price;
-				product.isFeatured = param_product.isFeatured;
+
+				product.set('name', param_product.name);
+				product.set('price', param_product.price);
+				product.set('isFeatured', param_product.isFeatured);
+
+				central_upload(req, product);
 
 				product.save(function (err, product, numberAffected) {
 					if (err) {
@@ -161,7 +198,7 @@ exports.put = function(req, res){
 							title: '500',
 							addons: {
 								error: err,
-								message: 'internal failure'
+								message: 'Internal failure'
 							}
 						});
 					} else {
@@ -208,7 +245,7 @@ exports.delete = function(req, res){
 					title: '500',
 					addons: {
 						error: err,
-						message: 'internal failure'
+						message: 'Internal failure'
 					}
 				});
 			} else if (product) {
@@ -221,7 +258,7 @@ exports.delete = function(req, res){
 							title: '500',
 							addons: {
 								error: err,
-								message: 'internal failure'
+								message: 'Internal failure'
 							}
 						});
 					} else {

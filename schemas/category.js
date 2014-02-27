@@ -42,6 +42,14 @@ var CategorySchema = new Schema({
 	},
 	sort: {
 		type: Number
+	},
+	image_large: {
+		type: String,
+		default: 'placehold.it/500&text=No Large Image'
+	},
+	image_small: {
+		type: String,
+		default: 'placehold.it/500&text=No Small Image'
 	}
 });
 

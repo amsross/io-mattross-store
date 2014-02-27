@@ -3,5 +3,6 @@
 [http://io-mattross-store.herokuapp.com](http://io-mattross-store.herokuapp.com)
 
 ### Required `.env` variables:
+* IMAGESHACK_API
 * MONGOHQ_URL
 * NODE_ENV

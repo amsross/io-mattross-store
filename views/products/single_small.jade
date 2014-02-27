@@ -5,6 +5,6 @@ if product
 				= product.name
 		p.product-image
 			a(href='/products/' + product.slug)
-				img.thumbnail.img-responsive(src='http://placehold.it/200&text=' + product.name)
+				img.thumbnail.img-responsive(src='//' + product.image_small)
 		p.product-price
 			= product.prettyPrice()

@@ -1,12 +1,14 @@
 - var is_admin = true
 if category
 	.category.category--large
-		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), data-source='#category_' + category._id)
+		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), enctype='multipart/form-data')
 			.row
 				input(type='hidden', name='category[name]', value=category.name)
 				.col-xs-12.col-md-5.image
-					img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + category.name)
-				.col-xs-12.col-md-7.info(id='category_' + category._id)
+					img.thumbnail.img-responsive(src='//' + category.image_large)
+					if is_admin
+						input.col-xs-12(type='file', name='image_large')
+				.col-xs-12.col-md-7.info
 					.row
 						.col-xs-12
 							h2(contenteditable=is_admin, data-name='category[name]')= category.name
@@ -15,10 +17,7 @@ if category
 								if products
 									each product in products
 										label.col-sm-6
-											if (_.pluck(category.products, 'slug').indexOf(product.slug) !== -1)
-												input(type='checkbox', name='category[products][]', value=product._id, checked)
-											else
-												input(type='checkbox', name='category[products][]', value=product._id)
+											input(type='checkbox', name='category[products]', value=product._id, checked=(_.pluck(category.products, 'slug').indexOf(product.slug) !== -1))
 											small  
 												= product.name
 						.col-xs-12

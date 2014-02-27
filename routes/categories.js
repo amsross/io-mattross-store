@@ -3,6 +3,8 @@
  */
 var _ = require('underscore'),
 	CategorySchema = require('../schemas/category'),
+	formData = require('form-data'),
+	fs = require('fs'),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -16,6 +18,31 @@ var _ = require('underscore'),
 			site_parts: params.site_parts||req.site_parts,
 			title: params.title ? params.title + ' &raquo; ' : ''
 		}, params.addons));
+	},
+	central_upload = function(req, category) {
+		'use strict';
+		if (req.files && req.files.image_large && req.files.image_large.size) {
+			var form = new formData();
+			form.append('key', process.env.IMAGESHACK_API);
+			form.append('fileupload', fs.createReadStream(req.files.image_large.path));
+			form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+				// res – response object (http.IncomingMessage)
+				res.setEncoding('utf8');
+				res.on('data', function(data) {
+					data = JSON.parse(data);
+					if (data.success && data.result && data.result.images && data.result.images.length) {
+						category.set('image_large', (_.first(data.result.images)||{}).direct_link);
+						category.set('image_small', (_.first(data.result.images)||{}).direct_link);
+						category.save();
+					}
+				});
+				if (!err) {
+					res.resume(); // for node-0.10.x
+				} else {
+					console.log(err);
+				}
+			});
+		}
 	};
 
 /*
@@ -106,13 +133,18 @@ exports.get = function(req, res){
 exports.post = function(req, res){
 	'use strict';
 
-	var param_category = req.param('category'),
-		category;
+	var
+		category,
+		param_category = req.param('category')
+		;
 
 	if (param_category) {
+
 		category = new CategorySchema();
 		category.name = param_category.name;
 		category.isTopLevel = param_category.isTopLevel;
+
+		central_upload(req, category);
 
 		category.save(function (err, category) {
 			if (err) {
@@ -149,9 +181,11 @@ exports.post = function(req, res){
 exports.put = function(req, res){
 	'use strict';
 
-	var param_slug = req.param('slug'),
+	var
 		param_category = req.param('category'),
-		record;
+		param_slug = req.param('slug'),
+		record
+		;
 
 	if (param_category) {
 		record = CategorySchema.findOne({'slug': param_slug}, function (err, category) {
@@ -167,9 +201,12 @@ exports.put = function(req, res){
 					}
 				});
 			} else if (category) {
+
 				category.name = param_category.name;
 				category.isTopLevel = param_category.isTopLevel;
 				category.products = param_category.products;
+
+				central_upload(req, category);
 
 				category.save(function (err, category, numberAffected) {
 					if (err) {
