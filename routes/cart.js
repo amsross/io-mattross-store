@@ -79,7 +79,6 @@ exports.add = function(req, res){
 				req.flash('info', 'Quantity updated');
 				cart[param_id].qty++;
 			} else {
-				req.flash('success', 'Item added to cart');
 				cart[param_id] = {
 					_id: product._id,
 					name: product.name,
@@ -88,6 +87,7 @@ exports.add = function(req, res){
 					prettyPrice: product.prettyPrice(),
 					qty: 1
 				};
+				req.flash('success', '<a class="alert-link" href="/products/' + cart[param_id].slug + '">' + cart[param_id].name + '</a>' + ' added to cart');
 			}
 
 			// display the cart for the user
@@ -115,9 +115,9 @@ exports.remove = function(req, res){
 
 	if (param_id) {
 
-		delete req.session.cart[param_id];
+		req.flash('info', '<a class="alert-link" href="/products/' + req.session.cart[param_id].slug + '">' + req.session.cart[param_id].name + '</a>' + ' removed from cart');
 
-		req.flash('info', 'Item removed from cart');
+		delete req.session.cart[param_id];
 
 		// display the cart for the user
 		res.redirect('/cart');

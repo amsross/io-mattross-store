@@ -3,64 +3,65 @@ footer.row
 		.row
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Categories
-				ul.list-unstyled
+				ul.nav.nav-pills.nav-stacked
 					if site_parts && site_parts.top_categories
 						each category in site_parts.top_categories
 							li
-								a(href='/categories/' + category.slug)
+								a.small(href='/categories/' + category.slug)
 									= category.name
 				h4 Products
-				ul.list-unstyled
+				ul.nav.nav-pills.nav-stacked
 					if site_parts && site_parts.top_products
 						each product in site_parts.top_products
 							li
-								a(href='/products/' + product.slug)
+								a.small(href='/products/' + product.slug)
 									= product.name
 			.col-xs-12.col-sm-6.col-md-3
 				h4 On The Web
-				ul.list-unstyled
-					li
-						a(href='javascript:;') leberkas
-					li
-						a(href='javascript:;') Venison hamburger
-					li
-						a(href='javascript:;') jerky pork
-					li
-						a(href='javascript:;') Flank beef
-					li
-						a(href='javascript:;') jerky strip
-					li
-						a(href='javascript:;') biltong turkey
-					li
-						a(href='javascript:;') kevin turducken
-					li
-						a(href='javascript:;') short loin
-					li
-						a(href='javascript:;') Boudin fatback
+				ul.nav.nav-pills.nav-stacked
+					li.disabled
+						a.small(href='javascript:;') leberkas
+					li.disabled
+						a.small(href='javascript:;') Venison hamburger
+					li.disabled
+						a.small(href='javascript:;') jerky pork
+					li.disabled
+						a.small(href='javascript:;') Flank beef
+					li.disabled
+						a.small(href='javascript:;') jerky strip
+					li.disabled
+						a.small(href='javascript:;') biltong turkey
+					li.disabled
+						a.small(href='javascript:;') kevin turducken
+					li.disabled
+						a.small(href='javascript:;') short loin
+					li.disabled
+						a.small(href='javascript:;') Boudin fatback
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Info
-				ul.list-unstyled
-					li
-						a(href='javascript:;') hamburger chicken
-					li
-						a(href='javascript:;') chop drumstick
-					li
-						a(href='javascript:;') pastrami spare
-					li
-						a(href='javascript:;') ribs filet mignon
+				ul.nav.nav-pills.nav-stacked
+					li.disabled
+						a.small(href='javascript:;') hamburger chicken
+					li.disabled
+						a.small(href='javascript:;') chop drumstick
+					li.disabled
+						a.small(href='javascript:;') pastrami spare
+					li.disabled
+						a.small(href='javascript:;') ribs filet mignon
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Tools
-				ul.list-unstyled
+				ul.nav.nav-pills.nav-stacked
 					if is_admin
 						li
-							a(href='/admin/off') Logout
+							a.small(href='/admin/off') Logout
 					else
 						li
-							a(href='/admin/on') Login
-					li
-						a(href='javascript:;') My Account
-					li
-						a(href='/cart') Shopping Cart
+							a.small(href='/admin/on') Login
+					li.disabled
+						a.small(href='javascript:;') My Account
+					if site_parts && site_parts.cart && site_parts.cart.total
+						li
+							a.small(href='/cart') Shopping Cart
 	.col-xs-12.col-md-4.text-right
 		.row
 			.col-xs-12
