@@ -39,13 +39,13 @@ header.row
 					a(href='/') Home
 				if site_parts && site_parts.top_categories
 					each category in site_parts.top_categories
-						li(class=(menu === category.slug ? 'active' : ''), class=category.child_categories ? 'dropdown' : '')
-							a(href='/categories/' + category.slug, class=category.child_categories ? 'dropdown-toggle' : '', data-toggle=category.child_categories ? 'dropdown' : '')
+						li(class=(menu === category.slug ? 'active' : ''), class=!_.isEmpty(category.child_categories) ? 'dropdown' : '')
+							a(href='/categories/' + category.slug, class=!_.isEmpty(category.child_categories) ? 'dropdown-toggle' : '', data-toggle=!_.isEmpty(category.child_categories) ? 'dropdown' : '')
 								= category.name
-								if category.child_categories
+								if !_.isEmpty(category.child_categories)
 									|  
 									b.caret
-							if category.child_categories
+							if !_.isEmpty(category.child_categories)
 								ul.dropdown-menu
 									li
 										a(href='/categories/' + category.slug)
