@@ -28,6 +28,10 @@ var ProductSchema = new Schema({
 		type: Boolean,
 		default: false
 	},
+	image_full: {
+		type: String,
+		default: 'placehold.it/1000&text=No Full Image'
+	},
 	image_large: {
 		type: String,
 		default: 'placehold.it/500&text=No Large Image'

@@ -5,6 +5,7 @@ var _ = require('underscore'),
 	CategorySchema = require('../schemas/category'),
 	formData = require('form-data'),
 	fs = require('fs'),
+	im = require('imagemagick'),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -22,23 +23,118 @@ var _ = require('underscore'),
 	},
 	central_upload = function(req, product) {
 		'use strict';
-		if (req.files && req.files.image_large && req.files.image_large.size) {
-			var form = new formData();
-			form.append('key', process.env.IMAGESHACK_API);
-			form.append('fileupload', fs.createReadStream(req.files.image_large.path));
-			form.submit('https://api.imageshack.us/v1/images', function(err, res) {
-				// res – response object (http.IncomingMessage)
-				res.setEncoding('utf8');
-				res.on('data', function(data) {
-					data = JSON.parse(data);
-					if (data.success && data.result && data.result.images && data.result.images.length) {
-						product.set('image_large', (_.first(data.result.images)||{}).direct_link);
-						product.set('image_small', (_.first(data.result.images)||{}).direct_link);
-						product.save();
-					}
-				});
+		if (req.files && req.files.image_full && req.files.image_full.size) {
+
+			// create a very large version
+			im.resize({
+				width: 1000,
+				height: 1000,
+				srcData: fs.readFileSync(req.files.image_full.path)
+			}, function(err, stdout, stderr) {
 				if (!err) {
-					res.resume(); // for node-0.10.x
+					fs.writeFileSync(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
+					var form = new formData();
+					form.append('key', process.env.IMAGESHACK_API);
+					form.append('fileupload', fs.createReadStream(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop()));
+					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+						// res – response object (http.IncomingMessage)
+						res.setEncoding('utf8');
+						res.on('data', function(data) {
+							data = JSON.parse(data);
+							if (data.success && data.result && data.result.images && data.result.images.length) {
+								product.set('image_full', (_.first(data.result.images)||{}).direct_link);
+								product.save();
+							}
+						});
+						res.on('end', function() {
+							fs.unlink(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop(), function(err) {
+								if (err) throw err;
+							});
+						});
+						if (!err) {
+							res.resume(); // for node-0.10.x
+						} else {
+							console.log(err);
+						}
+					});
+				} else {
+					console.log(err);
+				}
+			});
+
+			// create a large version
+			im.crop({
+				width: 500,
+				height: 500,
+				gravity: 'center',
+				extent: '500x500',
+				srcData: fs.readFileSync(req.files.image_full.path)
+			}, function(err, stdout, stderr) {
+				if (!err) {
+					fs.writeFileSync(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
+					var form = new formData();
+					form.append('key', process.env.IMAGESHACK_API);
+					form.append('fileupload', fs.createReadStream(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop()));
+					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+						// res – response object (http.IncomingMessage)
+						res.setEncoding('utf8');
+						res.on('data', function(data) {
+							data = JSON.parse(data);
+							if (data.success && data.result && data.result.images && data.result.images.length) {
+								product.set('image_large', (_.first(data.result.images)||{}).direct_link);
+								product.save();
+							}
+						});
+						res.on('end', function() {
+							fs.unlink(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop(), function(err) {
+								if (err) throw err;
+							});
+						});
+						if (!err) {
+							res.resume(); // for node-0.10.x
+						} else {
+							console.log(err);
+						}
+					});
+				} else {
+					console.log(err);
+				}
+			});
+
+			// create a small version
+			im.crop({
+				width: 200,
+				height: 200,
+				gravity: 'center',
+				extent : '200x200',
+				srcData: fs.readFileSync(req.files.image_full.path)
+			}, function(err, stdout, stderr) {
+				if (!err) {
+					fs.writeFileSync(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
+					var form = new formData();
+					form.append('key', process.env.IMAGESHACK_API);
+					form.append('fileupload', fs.createReadStream(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop()));
+					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+						// res – response object (http.IncomingMessage)
+						res.setEncoding('utf8');
+						res.on('data', function(data) {
+							data = JSON.parse(data);
+							if (data.success && data.result && data.result.images && data.result.images.length) {
+								product.set('image_small', (_.first(data.result.images)||{}).direct_link);
+								product.save();
+							}
+						});
+						res.on('end', function() {
+							fs.unlink(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop(), function(err) {
+								if (err) throw err;
+							});
+						});
+						if (!err) {
+							res.resume(); // for node-0.10.x
+						} else {
+							console.log(err);
+						}
+					});
 				} else {
 					console.log(err);
 				}
@@ -71,7 +167,7 @@ exports.new = function(req, res){
 				central_render(req, res, {
 					body_class: 'products products_edit',
 					template: 'products/edit',
-					title: 'Products',
+					title: 'New Product',
 					addons: {
 						categories: categories,
 						product: product
@@ -119,7 +215,7 @@ exports.get = function(req, res){
 						central_render(req, res, {
 							body_class: 'products products_edit',
 							template: 'products/edit',
-							title: 'Products',
+							title: product.name,
 							addons: {
 								categories: categories,
 								product: product
