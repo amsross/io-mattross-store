@@ -91,29 +91,44 @@ ProductSchema.pre('save', function(next) {
 			});
 	}
 
+/*
 	// remove this product from any categories no longer in the product.categories array
-	mongoose.models.Category
-		.find({products: { '$in' : [that._id]}}, function (err, categories) {
-			if (categories) {
-				console.log(categories);
-				_.each(categories, function(category) {
-					if ((that.categories||[]).indexOf(category._id) === -1) {
-						category.products.remove(that);
+	if (that.isModified('categories')) {
+		mongoose.models.Category
+			.find({products: { '$in' : [that._id]}}, function (err, categories) {
+				if (categories) {
+					// console.log('remove this product from any categories no longer in the product.categories array');
+					_.each(categories, function(category) {
+						if ((!_.isArray(that.categories) || _.isEmpty(that.categories)) || that.categories.indexOf(category._id) === -1) {
+							if (_.isArray(category.products) && category.products.indexOf(that._id) !== -1) {
+								console.log(that.slug + ' removed from ' + category.slug);
+								category.products.remove(that);
+								category.save();
+							}
+						}
+					});
+				}
+			});
+	}
+ */
+
+/*
+	// add this product to any categories now in the product.categories array
+	if (that.isModified('categories')) {
+		that.populate('categories', function(err, product) {
+			// console.log('add this product to any categories now in the product.categories array');
+			_.each(product.categories, function(category) {
+				if ((!_.isArray(category.products) || _.isEmpty(category.products)) || category.products.indexOf(product._id) === -1) {
+					if (!_.isArray(product.categories) || product.categories.indexOf(category._id) !== -1) {
+						console.log(product.slug + ' added to ' + category.slug);
+						category.products.push(product);
 						category.save();
 					}
-				});
-			}
+				}
+			});
 		});
-
-	// add this product to any categories now in the product.categories array
-	that.populate('categories', function(err, that) {
-		_.each(that.categories, function(category) {
-			if ((category.products||[]).indexOf(that._id) === -1) {
-				category.products.push(that);
-				category.save();
-			}
-		});
-	});
+	}
+ */
 });
 
 module.exports = mongoose.model('Product', ProductSchema);
