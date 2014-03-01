@@ -102,7 +102,6 @@ CategorySchema.pre('save', function(next) {
 		});
 	}
 
-/*
 	// remove this category from the parent_categories property of any category that is no longer in the category.child_categories array
 	if (that.isModified('child_categories')) {
 		mongoose.models.Category
@@ -119,25 +118,24 @@ CategorySchema.pre('save', function(next) {
 				}
 			});
 	}
- */
 
-/*
 	// add this category to the parent_categories property of any category that is in the category.child_categories array
 	if (that.isModified('child_categories')) {
 		that.populate('child_categories', function(err, populated_category) {
 			// console.log('add this category to the parent_categories property of any category that is in the category.child_categories array');
 			_.each(populated_category.child_categories, function(child_category) {
-				if (!that._id.equals(child_category._id)) {
-					if ((!_.isArray(child_category.parent_categories) || _.isEmpty(child_category.parent_categories)) || child_category.parent_categories.indexOf(that._id) === -1) {
-						console.log(that.slug + ' added to ' + child_category.slug);
-						child_category.parent_categories.push(that);
-						child_category.save();
+				if (!populated_category._id.equals(child_category._id)) {
+					if ((!_.isArray(child_category.parent_categories) || _.isEmpty(child_category.parent_categories)) || child_category.parent_categories.indexOf(populated_category._id) === -1) {
+						if (_.isArray(populated_category.child_categories) || populated_category.child_categories.indexOf(child_category) !== -1) {
+							console.log(populated_category.slug + ' added to ' + child_category.slug);
+							child_category.parent_categories.push(populated_category);
+							child_category.save();
+						}
 					}
 				}
 			});
 		});
 	}
- */
 
 /*
 	// remove this category from any products no longer in the category.products array
@@ -163,13 +161,13 @@ CategorySchema.pre('save', function(next) {
 /*
 	// add this category to any products now in the category.products array
 	if (that.isModified('products')) {
-		that.populate('products', function(err, category) {
+		that.populate('products', function(err, populated_category) {
 			// console.log('add this category to any products now in the category.products array');
-			_.each(category.products, function(product) {
-				if ((!_.isArray(product.categories) || _.isEmpty(product.categories)) || product.categories.indexOf(category._id) === -1) {
-					if (_.isArray(category.products) || category.products.indexOf(product._id) !== -1) {
-						console.log(category.slug + ' added to ' + product.slug);
-						product.categories.push(category);
+			_.each(populated_category.products, function(product) {
+				if ((!_.isArray(product.categories) || _.isEmpty(product.categories)) || product.categories.indexOf(populated_category._id) === -1) {
+					if (_.isArray(populated_category.products) || populated_category.products.indexOf(product) !== -1) {
+						console.log(populated_category.slug + ' added to ' + product.slug);
+						product.categories.push(populated_category);
 						product.save();
 					}
 				}

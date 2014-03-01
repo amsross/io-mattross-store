@@ -69,29 +69,33 @@ ProductSchema.pre('save', function(next) {
 
 	var that = this;
 
+	// update the meta dates
 	if (!validateDate(that.created)) {
 		that.set('created', new Date());
 	}
 	that.set('updated', new Date());
 
-	that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
-
 	if (!validateName(that.name)) {
 		next(new Error('Product name is required'));
 	} else {
+
+		// generate a slug from the name
+		that.slug = that.name.replace(/\W+/g,'-').replace(/^-/,'').replace(/-$/,'');
+
+		// make sure this isn't a duplicate
 		mongoose.model('Product', ProductSchema)
 			.find({slug: that.slug}, function (err, products) {
 				if (that.isNew && products.length) {
 					next(new Error('Product slug already exists'));
 				}
 				if (!validatePrice(that.price)) {
+					// make sure there is a price
 					next(new Error('Product price is required'));
 				}
 				next();
 			});
 	}
 
-/*
 	// remove this product from any categories no longer in the product.categories array
 	if (that.isModified('categories')) {
 		mongoose.models.Category
@@ -110,25 +114,22 @@ ProductSchema.pre('save', function(next) {
 				}
 			});
 	}
- */
 
-/*
 	// add this product to any categories now in the product.categories array
 	if (that.isModified('categories')) {
-		that.populate('categories', function(err, product) {
+		that.populate('categories', function(err, populated_product) {
 			// console.log('add this product to any categories now in the product.categories array');
-			_.each(product.categories, function(category) {
-				if ((!_.isArray(category.products) || _.isEmpty(category.products)) || category.products.indexOf(product._id) === -1) {
-					if (!_.isArray(product.categories) || product.categories.indexOf(category._id) !== -1) {
-						console.log(product.slug + ' added to ' + category.slug);
-						category.products.push(product);
+			_.each(populated_product.categories, function(category) {
+				if ((!_.isArray(category.products) || _.isEmpty(category.products)) || category.products.indexOf(populated_product._id) === -1) {
+					if (!_.isArray(populated_product.categories) || populated_product.categories.indexOf(category) !== -1) {
+						console.log(populated_product.slug + ' added to ' + category.slug);
+						category.products.push(populated_product);
 						category.save();
 					}
 				}
 			});
 		});
 	}
- */
 });
 
 module.exports = mongoose.model('Product', ProductSchema);

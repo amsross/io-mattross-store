@@ -16,22 +16,6 @@ if category
 							.col-xs-12
 								.row
 									.col-sm-6
-										h5 Available Products
-										ul.unstyled.sortable.category--sortable.category-sortable-products(data-connectwith='.category-sortable-products')
-											if products
-												each product in products
-													if (_.pluck(category.products, 'slug').indexOf(product.slug) === -1)
-														li(value=product._id)= product.name
-									.col-sm-6
-										h5 Included Products
-										ul.unstyled.sortable.category--sortable.category-sortable-products(data-connectwith='.category-sortable-products',contenteditable=is_admin, data-name='category[products][]')
-											if products
-												each product in products
-													if (_.pluck(category.products, 'slug').indexOf(product.slug) !== -1)
-														li(value=product._id)= product.name
-							.col-xs-12
-								.row
-									.col-sm-6
 										h5 Available Child Categories
 										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories')
 											if categories
