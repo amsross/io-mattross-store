@@ -1,6 +1,9 @@
 *.log
 *.min.*
 *_log
+*~
+~*
+*.swp
 .env
 bower_components
 node_modules
