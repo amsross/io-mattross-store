@@ -1,25 +1,6 @@
 extends ../_layouts/default
 
 block content
-	if cart
-		table.items.well.well-sm.table.table-striped.table-bordered.table-hover.table-condensed
-			each product in cart.items
-				tr.item
-					td.col-xs-2
-						a(href='/products/' + product.slug)
-							img.thumbnail.img-responsive(src='http://placehold.it/500&text=' + product.name)
-						br
-					td.col-xs-5
-						a(href='/products/' + product.slug)= product.name
-					td.col-xs-2
-						= product.prettyPrice
-					td.col-xs-1
-						= product.qty
-					td.col-xs-2 $
-						= Math.ceil((product.price * product.qty) * 100) / 100
-						a.close(href='/cart/remove/' + product._id) &times;
-			tr
-				td(colspan='5')
-					h3.text-right
-						| Total: $
-						= cart.total
+	include ../_includes/cart
+	if cart && cart.items
+		a.btn.btn-block.btn-success(href='/cart/pay/') Checkout

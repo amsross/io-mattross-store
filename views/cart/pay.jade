@@ -1,0 +1,32 @@
+extends ../_layouts/default
+
+block content
+	.row
+		.col-xs-12.col-md-6
+			include ../_includes/cart
+		form.form-horizontal.col-xs-12.col-md-6(method='POST', action='/cart/pay', role='form')
+			.form-group
+				label.control-label.col-xs-12.col-sm-3 First Name
+				.col-xs-12.col-sm-9
+					input.form-control(name='firstName', value='Ash', placeholder='First Name')
+			.form-group
+				label.control-label.col-xs-12.col-sm-3 Last Name
+				.col-xs-12.col-sm-9
+					input.form-control(name='lastName', value='Williams', placeholder='Last Name')
+			.form-group
+				label.control-label.col-xs-12.col-sm-3 CC #
+				.col-xs-12.col-sm-9
+					input.form-control(name='cc', placeholder='CC #', value='4968063715965299', maxlength='16')
+			.form-group
+				label.control-label.col-xs-12.col-sm-3 Expiration
+				.col-xs-12.col-sm-9
+					.row
+						.col-xs-12.col-sm-4.col-sm-offset-4
+							input.form-control(name='expMonth', placeholder='MM', value='3', maxlength='2', size='2')
+						.col-xs-12.col-sm-4
+							input.form-control(name='expYear', placeholder='YYYY', value='2018', maxlength='4', size='4')
+			.form-group
+				label.control-label.col-xs-12.col-sm-3 CVV
+				.col-xs-12.col-sm-9
+					input.form-control(name='cvv', placeholder='cvv', value='111', maxlength='4', size='4')
+			button.btn.btn-success.col-xs-12.col-sm-9.col-sm-offset-3(type='submit') Complete Purchase

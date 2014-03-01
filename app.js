@@ -148,7 +148,8 @@ module.exports = function (db) {
 	app.get('/cart/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.get);
 	app.get('/cart/add/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.add);
 	app.get('/cart/remove/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.remove);
-	// app.post('/cart/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.post);
+	app.get('/cart/pay/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.payGet);
+	app.post('/cart/pay/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.payPost);
 
 	return app;
 };

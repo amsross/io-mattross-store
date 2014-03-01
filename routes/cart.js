@@ -3,6 +3,7 @@
  */
 var ProductSchema = require('../schemas/product'),
 	_ = require('underscore'),
+	paypal = require('paypal-rest-sdk'),
 	central_render = function(req, res, params) {
 		'use strict';
 		res.status(params.status||200).render(params.template||'', _.extend({
@@ -17,6 +18,13 @@ var ProductSchema = require('../schemas/product'),
 			title: params.title ? params.title + ' &raquo; ' : ''
 		}, params.addons));
 	};
+
+paypal.configure({
+	'host' : process.env.PAYPAL_ENDPOINT,
+	'port' : '',
+	'client_id' : process.env.PAYPAL_CLIENTID,
+	'client_secret' : process.env.PAYPAL_SECRET
+});
 
 /*
  * GET the cart page
@@ -129,4 +137,121 @@ exports.remove = function(req, res){
 			message: 'Resource not provided'
 		});
 	}
+};
+
+/*
+ * GET pay
+ */
+exports.payGet = function(req, res){
+	'use strict';
+
+	// retrieve the shopping cart from memory
+	var cart = req.session.cart||{},
+		displayCart = {
+			items: [],
+			total: 0
+		},
+		total = 0;
+
+	if (!cart || !_.keys(cart).length) {
+		req.flash('warning', 'Your cart is empty');
+		res.redirect('/');
+		return;
+	}
+
+	// ready the products for display
+	for (var item in cart) {
+		displayCart.items.push(cart[item]);
+		total += (cart[item].qty * cart[item].price);
+	}
+	req.session.total = displayCart.total = total.toFixed(2);
+
+	central_render(req, res, {
+		template: 'cart/pay',
+		title: 'Checkout',
+		addons: {
+			cart: displayCart
+		}
+	});
+};
+/*
+ * POST pay
+ */
+exports.payPost = function(req, res){
+	'use strict';
+
+	req.session.cart = req.session.cart || {};
+
+	//Read the incoming product data
+	var cc = req.param('cc'),
+		firstName = req.param('firstName'),
+		lastName = req.param('lastName'),
+		expMonth = req.param('expMonth'),
+		expYear = req.param('expYear'),
+		cvv = req.param('cvv');
+
+	//Ready the payment information to pass to the PayPal library
+	var payment = {
+		'intent': 'sale',
+		'payer': {
+			'payment_method': 'credit_card',
+			'funding_instruments': []
+		},
+		'transactions': []
+	};
+
+	// Identify credit card type. Patent pending. Credit cards starting with 3 = amex, 4 = visa, 5 = mc , 6 = discover
+	var ccType = (['amex','visa','mastercard','discover'])[parseInt(cc.slice(0,1),10)-3];
+
+	//Set the credit card
+	payment.payer.funding_instruments[0] = {
+		'credit_card': {
+			'number': cc,
+			'type': ccType,
+			'expire_month': expMonth,
+			'expire_year': expYear,
+			'cvv2': cvv,
+			'first_name': firstName,
+			'last_name': lastName
+		}
+	};
+
+	//Set the total to charge the customer
+	payment.transactions[0] = {
+		amount: {
+			total: req.session.total,
+			currency: 'USD'
+		},
+		description: 'Your NodeStore Purchase'
+	};
+
+	//Execute the payment.
+	paypal.payment.create(payment, {}, function (err, resp) {
+		if (err) {
+			console.log(err);
+			central_render(req, res, {
+				status: '500',
+				template: '500',
+				addons: {
+					error: err
+				}
+			});
+			return;
+		}
+
+		if (resp) {
+			console.log(resp);
+			delete req.session.cart;
+			delete req.session.displayCart;
+
+			central_render(req, res, {
+				template: 'cart/result',
+				title: 'Cart',
+				addons: {
+					resp: resp,
+					result:'Success :)'
+				}
+			});
+		}
+	});
 };
