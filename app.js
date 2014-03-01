@@ -77,7 +77,6 @@ module.exports = function (db) {
 			.find({isTopLevel: true})
 			.limit(5)
 			.populate('child_categories')
-			// .sort({ sort: 1, name: 1 })
 			.sort({ name: 1 })
 			.exec(function(err, categories) {
 				if (err) {
@@ -95,8 +94,7 @@ module.exports = function (db) {
 		ProductSchema
 			.find({isFeatured: true})
 			.limit(5)
-			// .sort({ sort: 1, name: 1 })
-			.sort({ name: 1 })
+			.sort({ updated: -1, name: 1 })
 			.exec(function(err, products) {
 				if (err) {
 					console.log(err);

@@ -24,31 +24,10 @@ var _ = require('underscore'),
 exports.index = function(req, res){
 	'use strict';
 
-	ProductSchema
-		.find({isFeatured: true})
-		.sort({ updated: -1 })
-		.limit(4)
-		.exec(function(err, products) {
-			if (err) {
-				console.log(err);
-				central_render(req, res, {
-					status: 500,
-					template: '500',
-					title: '500',
-					addons: {
-						error: err
-					}
-				});
-			} else {
-				central_render(req, res, {
-					body_class: 'home',
-					menu: 'home',
-					template: 'index',
-					title: 'Home',
-					addons: {
-						products: products
-					}
-				});
-			}
-		});
+	central_render(req, res, {
+		body_class: 'home',
+		menu: 'home',
+		template: 'index',
+		title: 'Home'
+	});
 };
