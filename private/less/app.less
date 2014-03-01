@@ -7,13 +7,14 @@ body {
 
 header {
 	.brand {
-		float: left;
-		margin-left: @grid-gutter-width / 2;
 		margin-bottom: @grid-gutter-width / 2;
 	}
 	.nav {
-		&.pull-right {
-			clear: right;
+		li {
+			*display: block;
+			display: inline-block;
+			float: none;
+			zoom: 1;
 		}
 	}
 }
