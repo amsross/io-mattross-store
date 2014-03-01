@@ -107,7 +107,6 @@ CategorySchema.pre('save', function(next) {
 		mongoose.models.Category
 			.find({parent_categories: { '$in' : [that._id]}}, function (err, child_categories) {
 				if (child_categories) {
-					// console.log('remove this category from the parent_categories property of any category that is no longer in the category.child_categories array');
 					_.each(child_categories, function(child_category) {
 						if (_.isArray(that.child_categories) && that.child_categories.indexOf(child_category._id) === -1) {
 							console.log(that.slug + ' removed from ' + child_category.slug);
@@ -122,7 +121,6 @@ CategorySchema.pre('save', function(next) {
 	// add this category to the parent_categories property of any category that is in the category.child_categories array
 	if (that.isModified('child_categories')) {
 		that.populate('child_categories', function(err, populated_category) {
-			// console.log('add this category to the parent_categories property of any category that is in the category.child_categories array');
 			_.each(populated_category.child_categories, function(child_category) {
 				if (!populated_category._id.equals(child_category._id)) {
 					if ((!_.isArray(child_category.parent_categories) || _.isEmpty(child_category.parent_categories)) || child_category.parent_categories.indexOf(populated_category._id) === -1) {
@@ -143,7 +141,6 @@ CategorySchema.pre('save', function(next) {
 		mongoose.models.Product
 			.find({categories: { '$in' : [that._id]}}, function (err, products) {
 				if (products) {
-					// console.log('remove this category from any products no longer in the category.products array');
 					_.each(products, function(product) {
 						if ((!_.isArray(that.products) || _.isEmpty(that.products)) || that.products.indexOf(product._id) === -1) {
 							if (_.isArray(product.categories) && product.categories.indexOf(that._id) !== -1) {
@@ -162,7 +159,6 @@ CategorySchema.pre('save', function(next) {
 	// add this category to any products now in the category.products array
 	if (that.isModified('products')) {
 		that.populate('products', function(err, populated_category) {
-			// console.log('add this category to any products now in the category.products array');
 			_.each(populated_category.products, function(product) {
 				if ((!_.isArray(product.categories) || _.isEmpty(product.categories)) || product.categories.indexOf(populated_category._id) === -1) {
 					if (_.isArray(populated_category.products) || populated_category.products.indexOf(product) !== -1) {

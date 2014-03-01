@@ -101,7 +101,6 @@ ProductSchema.pre('save', function(next) {
 		mongoose.models.Category
 			.find({products: { '$in' : [that._id]}}, function (err, categories) {
 				if (categories) {
-					// console.log('remove this product from any categories no longer in the product.categories array');
 					_.each(categories, function(category) {
 						if ((!_.isArray(that.categories) || _.isEmpty(that.categories)) || that.categories.indexOf(category._id) === -1) {
 							if (_.isArray(category.products) && category.products.indexOf(that._id) !== -1) {
@@ -118,7 +117,6 @@ ProductSchema.pre('save', function(next) {
 	// add this product to any categories now in the product.categories array
 	if (that.isModified('categories')) {
 		that.populate('categories', function(err, populated_product) {
-			// console.log('add this product to any categories now in the product.categories array');
 			_.each(populated_product.categories, function(category) {
 				if ((!_.isArray(category.products) || _.isEmpty(category.products)) || category.products.indexOf(populated_product._id) === -1) {
 					if (!_.isArray(populated_product.categories) || populated_product.categories.indexOf(category) !== -1) {

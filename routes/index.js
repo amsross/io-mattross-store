@@ -27,7 +27,6 @@ exports.index = function(req, res){
 	central_render(req, res, {
 		body_class: 'home',
 		menu: 'home',
-		template: 'index',
-		title: 'Home'
+		template: 'index'
 	});
 };
