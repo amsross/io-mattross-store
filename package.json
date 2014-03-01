@@ -23,6 +23,7 @@
     "connect-flash": "~0.1.1",
     "connect-mongo": "~0.4.0",
     "connect-multiparty": "~1.0.3",
+    "easyimage": "~0.1.6",
     "express": "3.4.8",
     "form-data": "~0.1.2",
     "grunt": "~0.4.2",
@@ -35,17 +36,17 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-env": "~0.4.1",
     "grunt-nodemon": "~0.2.0",
+    "imagemagick": "~0.1.3",
     "jade": "*",
     "marked": "~0.3.0",
     "moment": "~2.5.1",
     "mongoose": "~3.8.8",
     "mongoose-findorcreate": "~0.1.2",
     "newrelic": "~1.3.2",
+    "paypal-rest-sdk": "~0.6.4",
     "request": "~2.33.0",
     "underscore": "~1.5.2",
-    "validator": "~3.3.0",
-    "imagemagick": "~0.1.3",
-    "easyimage": "~0.1.6"
+    "validator": "~3.3.0"
   },
   "devDependencies": {
     "grunt-mocha-test": "~0.9.3",
