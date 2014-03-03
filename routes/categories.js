@@ -346,7 +346,6 @@ exports.post = function(req, res){
 		category.set('description', param_category.description);
 		category.set('isTopLevel', param_category.isTopLevel);
 		category.set('name', param_category.name);
-		category.set('products', param_category.products);
 		category.set('child_categories', param_category.child_categories);
 
 		central_upload(req, category);
@@ -405,13 +404,9 @@ exports.put = function(req, res){
 				});
 			} else if (category) {
 
-				// param_category.child_categories.splice(param_category.child_categories.indexOf(category._id), 1);
-				// console.log(param_category.child_categories);
-
 				category.set('description', param_category.description);
 				category.set('isTopLevel', param_category.isTopLevel);
 				category.set('name', param_category.name);
-				category.set('products', param_category.products);
 				category.set('child_categories', param_category.child_categories);
 
 				if (category.child_categories && category.child_categories.indexOf(category._id) !== -1) {
