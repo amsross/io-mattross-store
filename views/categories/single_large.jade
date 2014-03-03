@@ -2,11 +2,11 @@ if category
 	.category.category--large
 		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), enctype='multipart/form-data')
 			.row
-				.col-xs-12.col-md-5.image
+				.col-xs-6.col-md-2.image
 					img.thumbnail.img-responsive(src='//' + category.image_large)
 					if is_admin
 						input.col-xs-12(type='file', name='image_full')
-				.col-xs-12.col-md-7.info
+				.col-xs-12.col-md-9.info
 					.row
 						.col-xs-12
 							h2(contenteditable=is_admin, data-name='category[name]')= category.name
@@ -18,15 +18,15 @@ if category
 									.col-sm-6
 										h5 Available Child Categories
 										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories')
-											if categories
-												each a_category in categories
+											if child_categories
+												each a_category in child_categories
 													if (category.child_categories.indexOf(a_category._id) === -1)
 														li(value=a_category._id)= a_category.name
 									.col-sm-6
 										h5 Selected Child Categories
 										ul.unstyled.sortable.category--sortable.category-sortable-subcategories(data-connectwith='.category-sortable-subcategories', contenteditable=is_admin, data-name='category[child_categories][]')
-											if categories
-												each a_category in categories
+											if child_categories
+												each a_category in child_categories
 													if (category.child_categories.indexOf(a_category._id) !== -1)
 														li(value=a_category._id)= a_category.name
 							.col-xs-12
@@ -47,5 +47,5 @@ if category
 			.row
 				if category.products
 					each product in category.products
-						.col-xs-12.col-sm-6.col-md-3
+						.col-xs-12.col-sm-4.col-md-3
 							include ../products/single_small

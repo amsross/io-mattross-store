@@ -2,7 +2,8 @@ extends ../_layouts/default
 
 block content
 	if categories
-		each category, index in categories
-			.category.col-xs-12.col-sm-6.col-md-4.margin-bottom
-				include single_small.jade
+		.row
+			each category, index in categories
+				.category.col-xs-6.col-sm-4.col-md-3.margin-bottom
+					include single_small.jade
 

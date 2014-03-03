@@ -46,7 +46,7 @@ var CategorySchema = new Schema({
 	},
 	image_full: {
 		type: String,
-		default: 'placehold.it/500&text=No Full Image'
+		default: 'placehold.it/1000&text=No Full Image'
 	},
 	image_large: {
 		type: String,
@@ -54,7 +54,7 @@ var CategorySchema = new Schema({
 	},
 	image_small: {
 		type: String,
-		default: 'placehold.it/500&text=No Small Image'
+		default: 'placehold.it/200&text=No Small Image'
 	}
 });
 

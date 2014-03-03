@@ -32,10 +32,11 @@ var _ = require('underscore'),
 				srcData: fs.readFileSync(req.files.image_full.path)
 			}, function(err, stdout, stderr) {
 				if (!err) {
-					fs.writeFileSync(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
-					var form = new formData();
+					var form = new formData(),
+						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
+					fs.writeFileSync(image_path, stdout, 'binary');
 					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop()));
+					form.append('fileupload', fs.createReadStream(image_path));
 					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
 						// res – response object (http.IncomingMessage)
 						res.setEncoding('utf8');
@@ -47,8 +48,12 @@ var _ = require('underscore'),
 							}
 						});
 						res.on('end', function() {
-							fs.unlink(__dirname + '/image_full.' + req.files.image_full.path.split('.').pop(), function(err) {
-								if (err) throw err;
+							fs.exists(image_path, function(exists) {
+								if(exists) {
+									fs.unlink(image_path, function(err) {
+										if (err) throw err;
+									});
+								}
 							});
 						});
 						if (!err) {
@@ -71,10 +76,11 @@ var _ = require('underscore'),
 				srcData: fs.readFileSync(req.files.image_full.path)
 			}, function(err, stdout, stderr) {
 				if (!err) {
-					fs.writeFileSync(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
-					var form = new formData();
+					var form = new formData(),
+						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
+					fs.writeFileSync(image_path, stdout, 'binary');
 					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop()));
+					form.append('fileupload', fs.createReadStream(image_path));
 					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
 						// res – response object (http.IncomingMessage)
 						res.setEncoding('utf8');
@@ -86,8 +92,12 @@ var _ = require('underscore'),
 							}
 						});
 						res.on('end', function() {
-							fs.unlink(__dirname + '/image_large.' + req.files.image_full.path.split('.').pop(), function(err) {
-								if (err) throw err;
+							fs.exists(image_path, function(exists) {
+								if(exists) {
+									fs.unlink(image_path, function(err) {
+										if (err) throw err;
+									});
+								}
 							});
 						});
 						if (!err) {
@@ -110,10 +120,11 @@ var _ = require('underscore'),
 				srcData: fs.readFileSync(req.files.image_full.path)
 			}, function(err, stdout, stderr) {
 				if (!err) {
-					fs.writeFileSync(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop(), stdout, 'binary');
-					var form = new formData();
+					var form = new formData(),
+						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
+					fs.writeFileSync(image_path, stdout, 'binary');
 					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop()));
+					form.append('fileupload', fs.createReadStream(image_path));
 					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
 						// res – response object (http.IncomingMessage)
 						res.setEncoding('utf8');
@@ -125,8 +136,12 @@ var _ = require('underscore'),
 							}
 						});
 						res.on('end', function() {
-							fs.unlink(__dirname + '/image_small.' + req.files.image_full.path.split('.').pop(), function(err) {
-								if (err) throw err;
+							fs.exists(image_path, function(exists) {
+								if(exists) {
+									fs.unlink(image_path, function(err) {
+										if (err) throw err;
+									});
+								}
 							});
 						});
 						if (!err) {
@@ -204,77 +219,114 @@ exports.get = function(req, res){
 	var param_slug = req.param('slug'),
 		record;
 
-	record = CategorySchema.findOne({'slug': param_slug}).
-		populate('products')
-		.exec( function (err, category) {
-			if (err) {
-				console.log(err);
-				central_render(req, res, {
-					status: 500,
-					template: '500',
-					title: '500',
-					addons: {
-						error: err
-					}
-				});
-			} else if (category) {
-
-				// get all the products that can be added to this category
-				require('../schemas/product').find()
-					.sort({ name: 1 })
-					.exec(function(err, products) {
-						if (err) {
-							console.log(err);
-							central_render(req, res, {
-								status: 500,
-								template: '500',
-								title: '500',
-								addons: {
-									error: err
-								}
-							});
-						} else {
-							// get all the categories that can be added as child_categories
-							require('../schemas/category').find()
-								.sort({ name: 1 })
-								.exec(function(err, categories) {
-									if (err) {
-										console.log(err);
-										central_render(req, res, {
-											status: 500,
-											template: '500',
-											title: '500',
-											addons: {
-												error: err
-											}
-										});
-									} else {
-										central_render(req, res, {
-											body_class: 'categories categories_edit',
-											menu: category.slug,
-											template: 'categories/edit',
-											title: 'Categories',
-											addons: {
-												categories: categories,
-												category: category,
-												products: products
-											}
-										});
-									}
-								});
+	if (param_slug) {
+		record = CategorySchema.findOne({'slug': param_slug}).
+			populate('products')
+			.exec( function (err, category) {
+				if (err) {
+					console.log(err);
+					central_render(req, res, {
+						status: 500,
+						template: '500',
+						title: '500',
+						addons: {
+							error: err
 						}
 					});
-			} else {
-				central_render(req, res, {
-					status: 404,
-					template: '404',
-					title: '404',
-					addons: {
-						message: 'The specified resource could not be found'
-					}
-				});
-			}
-		});
+				} else if (category) {
+
+					// get all the products that can be added to this category
+					require('../schemas/product').find()
+						.sort({ name: 1 })
+						.exec(function(err, products) {
+							if (err) {
+								console.log(err);
+								central_render(req, res, {
+									status: 500,
+									template: '500',
+									title: '500',
+									addons: {
+										error: err
+									}
+								});
+							} else {
+								// get all the categories that can be added as child_categories
+								require('../schemas/category').find()
+									.sort({ name: 1 })
+									.exec(function(err, child_categories) {
+										if (err) {
+											console.log(err);
+											central_render(req, res, {
+												status: 500,
+												template: '500',
+												title: '500',
+												addons: {
+													error: err
+												}
+											});
+										} else {
+											central_render(req, res, {
+												body_class: 'categories categories_edit',
+												menu: category.slug,
+												template: 'categories/edit',
+												title: category.name,
+												addons: {
+													child_categories: child_categories,
+													category: category,
+													products: products
+												}
+											});
+										}
+									});
+							}
+						});
+				} else {
+					central_render(req, res, {
+						status: 404,
+						template: '404',
+						title: '404',
+						addons: {
+							message: 'The specified resource could not be found'
+						}
+					});
+				}
+			});
+	} else {
+
+		record = CategorySchema.find()
+			.sort({ name: 1 })
+			.exec(function(err, categories) {
+				if (err) {
+					console.log(err);
+					central_render(req, res, {
+						status: 500,
+						template: '500',
+						title: '500',
+						addons: {
+							error: err
+						}
+					});
+				} else if (categories) {
+					central_render(req, res, {
+						body_class: 'categories categories_get',
+						template: 'categories/get',
+						title: 'Categories',
+						addons: {
+							categories: categories
+						}
+					});
+				} else {
+					central_render(req, res, {
+						status: 404,
+						template: '404',
+						title: '404',
+						addons: {
+							message: 'The specified resource could not be found'
+						}
+					});
+				}
+			});
+	}
 };
 
 /*

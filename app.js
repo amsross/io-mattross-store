@@ -134,14 +134,16 @@ module.exports = function (db) {
 	});
 
 	app.delete('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.delete);
+	app.get('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
 	app.get('/products/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.new);
 	app.get('/products/?:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
 	app.post('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.post);
 	app.put('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.put);
 
 	app.delete('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.delete);
+	app.get('/categories/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
 	app.get('/categories/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.new);
-	app.get('/categories/?:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
+	app.get('/categories/?:slug?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
 	app.post('/categories/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.post);
 	app.put('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.put);
 

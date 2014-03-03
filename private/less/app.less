@@ -9,14 +9,6 @@ header {
 	.brand {
 		margin-bottom: @grid-gutter-width / 2;
 	}
-	.nav {
-		> li {
-			*display: block;
-			display: inline-block;
-			float: none;
-			zoom: 1;
-		}
-	}
 }
 
 .nav {
@@ -104,3 +96,33 @@ form.contenteditable {
 footer {
 	margin-top: @navbar-margin-bottom;
 }
+
+
+// Phone and larger
+@media (min-width: @screen-xs-min) {}
+// Phone and smaller
+@media (max-width: @screen-xs-max) {}
+
+// Tablet and larger
+@media (min-width: @screen-sm-min) {
+	header {
+		.nav {
+			> li {
+				*display: block;
+				display: inline-block;
+				float: none;
+				zoom: 1;
+			}
+		}
+	}
+}
+// Tablet and smaller
+@media (max-width: @screen-sm-max) {}
+
+// Desktop and larger
+@media (min-width: @screen-md-min) {}
+// Desktop and smaller
+@media (max-width: @screen-md-max) {}
+
+// Large Desktop and larger
+@media (min-width: @screen-lg-min) {}
