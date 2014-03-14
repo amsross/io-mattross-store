@@ -5,7 +5,8 @@ var _ = require('underscore'),
 	CategorySchema = require('../schemas/category'),
 	formData = require('form-data'),
 	fs = require('fs'),
-	im = require('imagemagick'),
+	gm = require('gm'),
+	im = gm.subClass({ imageMagick: true }),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -25,135 +26,136 @@ var _ = require('underscore'),
 		'use strict';
 		if (req.files && req.files.image_full && req.files.image_full.size) {
 
-			// create a very large version
-			im.resize({
-				width: 1000,
-				height: 1000,
-				srcData: fs.readFileSync(req.files.image_full.path)
-			}, function(err, stdout, stderr) {
-				if (!err) {
-					var form = new formData(),
-						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
-					fs.writeFileSync(image_path, stdout, 'binary');
-					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(image_path));
-					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
-						// res – response object (http.IncomingMessage)
-						res.setEncoding('utf8');
-						res.on('data', function(data) {
-							data = JSON.parse(data);
-							if (data.success && data.result && data.result.images && data.result.images.length) {
-								category.set('image_full', (_.first(data.result.images)||{}).direct_link);
-								category.save();
-							}
-						});
-						res.on('end', function() {
-							fs.exists(image_path, function(exists) {
-								if(exists) {
-									fs.unlink(image_path, function(err) {
-										if (err) throw err;
-									});
-								}
-							});
-						});
-						if (!err) {
-							res.resume(); // for node-0.10.x
-						} else {
-							console.log(err);
+			var readStream = fs.createReadStream(req.files.image_full.path);
+
+			// create a full size version
+			var writeStream_full = fs.createWriteStream(__dirname + '/' + category._id + '_image_full.' + req.files.image_full.path.split('.').pop());
+			writeStream_full.on('finish', function() {
+
+				var that = this,
+					form = new formData();
+
+				form.append('key', process.env.IMAGESHACK_API);
+				form.append('fileupload',  fs.createReadStream(that.path));
+				form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+					res.setEncoding('utf8');
+					res.on('data', function(data) {
+						data = JSON.parse(data);
+						if (data.success && data.result && data.result.images && data.result.images.length) {
+							category.set('image_full', (_.first(data.result.images)||{}).direct_link);
+							category.save();
 						}
 					});
-				} else {
-					console.log(err);
-				}
+					res.on('end', function() {
+						fs.exists(that.path, function(exists) {
+							if(exists) {
+								fs.unlink(that.path, function(err) {
+									if (err) throw err;
+								});
+							}
+						});
+					});
+					if (!err) {
+						res.resume(); // for node-0.10.x
+					} else {
+						console.log(err);
+					}
+				});
 			});
+
+			im(readStream, req.files.image_full.name)
+				.geometry(1000, 1000, '^')
+				.resize(1000, 1000)
+				.gravity('Center')
+				.stream()
+				.pipe(writeStream_full)
+				;
 
 			// create a large version
-			im.crop({
-				width: 500,
-				height: 500,
-				gravity: 'center',
-				extent: '500x500',
-				srcData: fs.readFileSync(req.files.image_full.path)
-			}, function(err, stdout, stderr) {
-				if (!err) {
-					var form = new formData(),
-						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
-					fs.writeFileSync(image_path, stdout, 'binary');
-					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(image_path));
-					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
-						// res – response object (http.IncomingMessage)
-						res.setEncoding('utf8');
-						res.on('data', function(data) {
-							data = JSON.parse(data);
-							if (data.success && data.result && data.result.images && data.result.images.length) {
-								category.set('image_large', (_.first(data.result.images)||{}).direct_link);
-								category.save();
-							}
-						});
-						res.on('end', function() {
-							fs.exists(image_path, function(exists) {
-								if(exists) {
-									fs.unlink(image_path, function(err) {
-										if (err) throw err;
-									});
-								}
-							});
-						});
-						if (!err) {
-							res.resume(); // for node-0.10.x
-						} else {
-							console.log(err);
+			var writeStream_large = fs.createWriteStream(__dirname + '/' + category._id + '_image_large.' + req.files.image_full.path.split('.').pop());
+			writeStream_large.on('finish', function() {
+				var that = this,
+					form = new formData();
+
+				form.append('key', process.env.IMAGESHACK_API);
+				form.append('fileupload',  fs.createReadStream(that.path));
+				form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+					res.setEncoding('utf8');
+					res.on('data', function(data) {
+						data = JSON.parse(data);
+						if (data.success && data.result && data.result.images && data.result.images.length) {
+							category.set('image_large', (_.first(data.result.images)||{}).direct_link);
+							category.save();
 						}
 					});
-				} else {
-					console.log(err);
-				}
+					res.on('end', function() {
+						fs.exists(that.path, function(exists) {
+							if(exists) {
+								fs.unlink(that.path, function(err) {
+									if (err) throw err;
+								});
+							}
+						});
+					});
+					if (!err) {
+						res.resume(); // for node-0.10.x
+					} else {
+						console.log(err);
+					}
+				});
 			});
 
+			im(readStream, req.files.image_full.name)
+				.geometry(500, 500, '^')
+				.gravity('Center')
+				.crop(500, 500, 0, 0)
+				.extent(500, 500)
+				.stream()
+				.pipe(writeStream_large)
+				;
+
 			// create a small version
-			im.crop({
-				width: 200,
-				height: 200,
-				gravity: 'center',
-				extent : '200x200',
-				srcData: fs.readFileSync(req.files.image_full.path)
-			}, function(err, stdout, stderr) {
-				if (!err) {
-					var form = new formData(),
-						image_path = __dirname + '/' + category._id + 'image_full.' + req.files.image_full.path.split('.').pop();
-					fs.writeFileSync(image_path, stdout, 'binary');
-					form.append('key', process.env.IMAGESHACK_API);
-					form.append('fileupload', fs.createReadStream(image_path));
-					form.submit('https://api.imageshack.us/v1/images', function(err, res) {
-						// res – response object (http.IncomingMessage)
-						res.setEncoding('utf8');
-						res.on('data', function(data) {
-							data = JSON.parse(data);
-							if (data.success && data.result && data.result.images && data.result.images.length) {
-								category.set('image_small', (_.first(data.result.images)||{}).direct_link);
-								category.save();
-							}
-						});
-						res.on('end', function() {
-							fs.exists(image_path, function(exists) {
-								if(exists) {
-									fs.unlink(image_path, function(err) {
-										if (err) throw err;
-									});
-								}
-							});
-						});
-						if (!err) {
-							res.resume(); // for node-0.10.x
-						} else {
-							console.log(err);
+			var writeStream_small = fs.createWriteStream(__dirname + '/' + category._id + '_image_small.' + req.files.image_full.path.split('.').pop());
+			writeStream_small.on('finish', function() {
+				var that = this,
+					form = new formData();
+
+				form.append('key', process.env.IMAGESHACK_API);
+				form.append('fileupload',  fs.createReadStream(that.path));
+				form.submit('https://api.imageshack.us/v1/images', function(err, res) {
+					res.setEncoding('utf8');
+					res.on('data', function(data) {
+						data = JSON.parse(data);
+						if (data.success && data.result && data.result.images && data.result.images.length) {
+							category.set('image_small', (_.first(data.result.images)||{}).direct_link);
+							category.save();
 						}
 					});
-				} else {
-					console.log(err);
-				}
+					res.on('end', function() {
+						fs.exists(that.path, function(exists) {
+							if(exists) {
+								fs.unlink(that.path, function(err) {
+									if (err) throw err;
+								});
+							}
+						});
+					});
+					if (!err) {
+						res.resume(); // for node-0.10.x
+					} else {
+						console.log(err);
+					}
+				});
 			});
+
+			im(readStream, req.files.image_full.name)
+				.geometry(200, 200, '^')
+				.gravity('Center')
+				.crop(200, 200, 0, 0)
+				.extent(200, 200)
+				.stream()
+				.pipe(writeStream_small)
+				;
 		}
 	};
 
