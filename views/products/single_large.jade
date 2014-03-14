@@ -3,7 +3,8 @@ if product
 		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''), enctype='multipart/form-data')
 			.row
 				.col-xs-12.col-md-5.image
-					img.thumbnail.img-responsive(src='//' + product.image_large)
+					a(href='//' + product.image_full, data-lightbox='image_full')
+						img.thumbnail.img-responsive(src='//' + product.image_large)
 					if is_admin
 						input.col-xs-12(type='file', name='image_full')
 				.col-xs-12.col-md-7.info

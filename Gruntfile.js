@@ -59,6 +59,7 @@ module.exports = function(grunt) {
 			dist: {
 				files: {
 					'public/css/main.min.css': [
+						'private/bower_components/lightbox2/css/lightbox.css',
 						'private/less/app.less'
 					]
 				},
@@ -85,6 +86,7 @@ module.exports = function(grunt) {
 						'private/bower_components/bootstrap/js/alert.js',
 						'private/bower_components/bootstrap/js/carousel.js',
 						'private/bower_components/bootstrap/js/dropdown.js',
+						'private/bower_components/lightbox2/js/lightbox.js',
 						// 'private/bower_components/momentjs/moment.js',
 						'private/js/app.js'
 					]
@@ -168,6 +170,14 @@ module.exports = function(grunt) {
 					'private/bower_components/bootstrap/dist/fonts/*',
 				],
 				dest: 'public/fonts/'
+			},
+			lightbox2: {
+				expand: true,
+				flatten: true,
+				src: [
+					'private/bower_components/lightbox2/img/*',
+				],
+				dest: 'public/img/'
 			}
 		}
 	});
@@ -192,7 +202,8 @@ module.exports = function(grunt) {
 		'less',
 		'uglify',
 		'imagemin',
-		'copy:fonts'
+		'copy:fonts',
+		'copy:lightbox2'
 	]);
 
 	grunt.registerTask('dev', [
@@ -201,6 +212,7 @@ module.exports = function(grunt) {
 		'uglify',
 		'imagemin',
 		'copy:fonts',
+		'copy:lightbox2',
 		'concurrent'
 	]);
 
