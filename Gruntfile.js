@@ -153,6 +153,14 @@ module.exports = function(grunt) {
 					}
 				}
 			},
+			n2o : {
+				src : '.env',
+				options : {
+					replace : {
+						NODE_ENV : 'n2o'
+					}
+				}
+			},
 			test : {
 				src : '.env',
 				options : {
@@ -204,6 +212,16 @@ module.exports = function(grunt) {
 		'imagemin',
 		'copy:fonts',
 		'copy:lightbox2'
+	]);
+
+	grunt.registerTask('n2o', [
+		'env:n2o',
+		'less',
+		'uglify',
+		'imagemin',
+		'copy:fonts',
+		'copy:lightbox2',
+		'concurrent'
 	]);
 
 	grunt.registerTask('dev', [
