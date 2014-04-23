@@ -70,9 +70,9 @@ describe('<Unit Test>', function() {
 				});
 			});
 
-			it('should be able to add subcategories', function(done) {
+			it('should be able to add child categories', function(done) {
 
-				category_04.sub_categories.push(category_01);
+				category_04.child_categories.push(category_01);
 				return category_04.save(function(err) {
 					should.not.exist(err);
 					done();
