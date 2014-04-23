@@ -109,7 +109,7 @@ CategorySchema.pre('save', function(next) {
 				if (child_categories) {
 					_.each(child_categories, function(child_category) {
 						if (_.isArray(that.child_categories) && that.child_categories.indexOf(child_category._id) === -1) {
-							console.log(that.slug + ' removed from ' + child_category.slug);
+							// console.log(that.slug + ' removed from ' + child_category.slug);
 							child_category.parent_categories.remove(that);
 							child_category.save();
 						}
@@ -125,7 +125,7 @@ CategorySchema.pre('save', function(next) {
 				if (!populated_category._id.equals(child_category._id)) {
 					if ((!_.isArray(child_category.parent_categories) || _.isEmpty(child_category.parent_categories)) || child_category.parent_categories.indexOf(populated_category._id) === -1) {
 						if (_.isArray(populated_category.child_categories) || populated_category.child_categories.indexOf(child_category) !== -1) {
-							console.log(populated_category.slug + ' added to ' + child_category.slug);
+							// console.log(populated_category.slug + ' added to ' + child_category.slug);
 							child_category.parent_categories.push(populated_category);
 							child_category.save();
 						}

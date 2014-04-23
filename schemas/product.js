@@ -104,7 +104,7 @@ ProductSchema.pre('save', function(next) {
 					_.each(categories, function(category) {
 						if ((!_.isArray(that.categories) || _.isEmpty(that.categories)) || that.categories.indexOf(category._id) === -1) {
 							if (_.isArray(category.products) && category.products.indexOf(that._id) !== -1) {
-								console.log(that.slug + ' removed from ' + category.slug);
+								// console.log(that.slug + ' removed from ' + category.slug);
 								category.products.remove(that);
 								category.save();
 							}
@@ -120,7 +120,7 @@ ProductSchema.pre('save', function(next) {
 			_.each(populated_product.categories, function(category) {
 				if ((!_.isArray(category.products) || _.isEmpty(category.products)) || category.products.indexOf(populated_product._id) === -1) {
 					if (!_.isArray(populated_product.categories) || populated_product.categories.indexOf(category) !== -1) {
-						console.log(populated_product.slug + ' added to ' + category.slug);
+						// console.log(populated_product.slug + ' added to ' + category.slug);
 						category.products.push(populated_product);
 						category.save();
 					}
