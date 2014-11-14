@@ -1,8 +1,22 @@
 language: node_js
 node_js:
-  - "0.11"
-  - "0.10"
+- '0.11'
+- '0.10'
 services:
-  - mongodb
+- mongodb
+branches:
+  only:
+  - master
+deploy:
+  provider: heroku
+  api_key:
+    secure: HZG6Dou7S6HdByLYlpuy8YkY7f8kpNIsG906VFhmIkb0xBV4nawvgfBnlV1FAXiQkViNaNogXHkKDnH5zJjNI/bPOrgqEmIwqdnSsuUe7mq/lGKGDj/9XcI3jg5LDK057ikBR3O9zTU7h2ADmsIG4T7bTklae+OOokz9EZGNTC8=
+  app: io-mattross-store
+  on:
+    repo: amsross/io-mattross-store
+before_install:
+- npm install -g bower grunt-cli
+install: npm install
+script: grunt test
 before_script:
-  - mongo test_db --eval 'db.addUser("test_user", "test_pass");'
+- mongo test_db --eval 'db.addUser("test_user", "test_pass");'
