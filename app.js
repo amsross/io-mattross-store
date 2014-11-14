@@ -30,6 +30,9 @@ module.exports = function (db) {
 	// development only
 	if ('production' !== app.get('env')) {
 		app.use(express.errorHandler());
+		app.use(require('connect-livereload')({
+			port: 4002
+		}));
 	}
 
 	// all environments

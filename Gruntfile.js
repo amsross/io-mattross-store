@@ -10,7 +10,9 @@ module.exports = function(grunt) {
 					'views/**/*.jade'
 				],
 				options: {
-					livereload: true,
+					livereload: {
+						port: 4002,
+					},
 				},
 			},
 			js: {
@@ -22,7 +24,9 @@ module.exports = function(grunt) {
 				],
 				tasks: ['jshint', 'uglify'],
 				options: {
-					livereload: true,
+					livereload: {
+						port: 4002,
+					},
 				},
 			},
 			img: {
@@ -31,7 +35,9 @@ module.exports = function(grunt) {
 				],
 				tasks: ['imagemin'],
 				options: {
-					livereload: true,
+					livereload: {
+						port: 4002,
+					},
 				},
 			},
 			less: {
@@ -40,7 +46,9 @@ module.exports = function(grunt) {
 				],
 				tasks: ['less'],
 				options: {
-					livereload: true
+					livereload: {
+						port: 4002,
+					},
 				}
 			}
 		},
