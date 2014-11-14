@@ -18,11 +18,22 @@ module.exports = function(grunt) {
 			js: {
 				files: [
 					'Gruntfile.js',
-					'*.js',
-					'routes/*.js',
-					'private/js/**'
+					'private/js/**',
+					'routes/**/*.js',
+					'schemas/**',
 				],
-				tasks: ['jshint', 'uglify'],
+				tasks: ['jshint'],
+				options: {
+					livereload: {
+						port: 4002,
+					},
+				},
+			},
+			fejs: {
+				files: [
+					'private/**/*.js',
+				],
+				tasks: ['uglify'],
 				options: {
 					livereload: {
 						port: 4002,

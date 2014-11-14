@@ -58,9 +58,9 @@ header.row
 				p.navbar-text.navbar-right
 					a(href='/cart').label.label-primary In Cart: 
 						= '$' + site_parts.cart.total
-			form.navbar-form(role='search', action='/search')
+			form.navbar-form(role='search', action='/search' method='GET')
 				.input-group
-					input.form-control(type='text', class='form-control', placeholder='Search')
+					input.form-control(type='text', class='form-control', placeholder='Search', name='q')
 					span.input-group-btn
 						button.btn.btn-default(type='submit')
 							span.glyphicon.glyphicon-search

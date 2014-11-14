@@ -123,6 +123,7 @@ module.exports = function (db) {
 	};
 
 	app.get('/', site_parts.top_categories, site_parts.top_products, site_parts.cart, routes.index);
+
 	app.get('/admin/on', function(req, res) {
 		req.session.IS_ADMIN = true;
 		res.redirect(req.headers.referer);
@@ -131,9 +132,7 @@ module.exports = function (db) {
 		req.session.IS_ADMIN = false;
 		res.redirect(req.headers.referer);
 	});
-	app.get('/search', function(req, res) {
-		res.redirect(req.headers.referer);
-	});
+	app.get('/search', site_parts.top_categories, site_parts.top_products, site_parts.cart, routes.search);
 
 	app.delete('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.delete);
 	app.get('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
