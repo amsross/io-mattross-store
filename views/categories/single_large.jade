@@ -1,17 +1,25 @@
+include ../_mixins/category_single_small
 if category
 	.category.category--large
 		form.contenteditable.col-sm-12(method='POST', action='/categories/' + (category.slug || ''), enctype='multipart/form-data')
 			.row
-				.col-xs-6.col-md-2.image
-					img.thumbnail.img-responsive(src='//' + category.image_large)
+				.col-xs-12.col-md-5.image
+					a(href='//' + category.image_full, data-lightbox='image_full')
+						img.thumbnail.img-responsive(src='//' + category.image_large)
 					if is_admin
 						input.col-xs-12(type='file', name='image_full')
-				.col-xs-12.col-md-9.info
+				.col-xs-12.col-md-7.info
 					.row
 						.col-xs-12
-							h2(contenteditable=is_admin, data-name='category[name]')= category.name
+							.row
+								.col-xs-12
+									h2(contenteditable=is_admin, data-name='category[name]')= category.name
 						.col-xs-12
-							p(contenteditable=is_admin, data-name='category[description]')= category.description
+							.row
+								.col-xs-4.col-md-4.text-right
+									label Description
+								.col-xs-8.col-md-8.text-left
+									p(contenteditable=is_admin, data-name='category[description]')= category.description
 						if is_admin
 							.col-xs-12
 								.row
@@ -43,6 +51,13 @@ if category
 											button.btn.btn-block.btn-info(name='_method', value='POST') create
 										else
 											button.btn.btn-block.btn-info(name='_method', value='PUT') update
+		.col-sm-12
+			.row
+				if child_categories
+					each child_category in child_categories
+						if (category.child_categories.indexOf(child_category._id) !== -1)
+							.col-xs-6.col-sm-3.col-md-2
+								+category_single_small(child_category)
 		.col-sm-12
 			.row
 				if category.products

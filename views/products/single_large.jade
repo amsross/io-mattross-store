@@ -1,3 +1,4 @@
+
 if product
 	.product.product--large
 		form.contenteditable.col-sm-12(method='POST', action='/products/' + (product.slug || ''), enctype='multipart/form-data')
@@ -10,30 +11,34 @@ if product
 				.col-xs-12.col-md-7.info
 					.row
 						.col-xs-12
-							h2(contenteditable=is_admin, data-name='product[name]')= product.name
-						.col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. Price
-								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[price]')= product.price
+								.col-xs-12
+									h2(contenteditable=is_admin, data-name='product[name]')= product.name
+						.col-xs-12
+							.row
+								.col-xs-4.col-md-4.text-right
+									label Price
+								.col-xs-8.col-md-8.text-left
+									p(contenteditable=is_admin, data-name='product[price]')= product.price
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. Brand:
+								.col-xs-4.col-md-4 Brand:
 								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[brand]')= product.brand
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. SKU:
+								.col-xs-4.col-md-4 SKU:
 								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[sku]')= product.sku
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. Stock:
+								.col-xs-4.col-md-4 Stock:
 								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[stock]')= product.stock
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. Shippable:
+								.col-xs-4.col-md-4 Shippable:
 								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[shipping]')= product.shipping
 						//- .col-xs-12.col-md-6
 							.row
-								.col-xs-4.col-md-4. Quantity:
+								.col-xs-4.col-md-4 Quantity:
 								.col-xs-8.col-md-8(contenteditable=is_admin, data-name='product[quantity]')= product.quantity
 						//- .col-xs-12.col-md-6
 							.row
@@ -44,7 +49,11 @@ if product
 								.col-xs-12
 									| Write a Review
 						.col-xs-12
-							p(contenteditable=is_admin, data-name='product[description]')!= product.description
+							.row
+								.col-xs-4.col-md-4.text-right
+									label Description
+								.col-xs-8.col-md-8.text-left
+									p(contenteditable=is_admin, data-name='product[description]')!= product.description
 						if is_admin
 							.col-xs-12
 								.row
