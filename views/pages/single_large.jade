@@ -1,0 +1,66 @@
+include ../_mixins/page_single_small
+if page
+	.page.page--large
+		form.contenteditable.col-sm-12(method='POST', action='/pages/' + (page.slug || ''), enctype='multipart/form-data')
+			.row
+				.col-xs-12.col-md-5.image
+					a(href='//' + page.image_full, data-lightbox='image_full')
+						img.thumbnail.img-responsive(src='//' + page.image_large)
+					if is_admin
+						input.col-xs-12(type='file', name='image_full')
+				.col-xs-12.col-md-7.info
+					.row
+						.col-xs-12
+							.row
+								.col-xs-12
+									h2(contenteditable=is_admin, data-name='page[name]')= page.name
+						.col-xs-12
+							.row
+								.col-xs-4.col-md-4.text-right
+									label Description
+								.col-xs-8.col-md-8.text-left
+									p(contenteditable=is_admin, data-name='page[description]')= page.description
+						if is_admin
+							.col-xs-12
+								.row
+									.col-sm-6
+										h5 Available Child Pages
+										ul.unstyled.sortable.page--sortable.page-sortable-subpages(data-connectwith='.page-sortable-subpages')
+											if child_pages
+												each a_page in child_pages
+													if (page.child_pages.indexOf(a_page._id) === -1)
+														li(value=a_page._id)= a_page.name
+									.col-sm-6
+										h5 Selected Child Pages
+										ul.unstyled.sortable.page--sortable.page-sortable-subpages(data-connectwith='.page-sortable-subpages', contenteditable=is_admin, data-name='page[child_pages][]')
+											if child_pages
+												each a_page in child_pages
+													if (page.child_pages.indexOf(a_page._id) !== -1)
+														li(value=a_page._id)= a_page.name
+							.col-xs-12
+								.row
+									label.col-sm-6
+										input(type='checkbox', name='page[isTopLevel]', value='true', checked=page.isTopLevel)
+										small  Top Level
+							.col-xs-12
+								.row
+									.col-sm-6
+										button.btn.btn-block.btn-danger(name='_method', value='DELETE') delete
+									.col-sm-6
+										if page.isNew
+											button.btn.btn-block.btn-info(name='_method', value='POST') create
+										else
+											button.btn.btn-block.btn-info(name='_method', value='PUT') update
+		.col-sm-12
+			.row
+				if child_pages
+					each child_page in child_pages
+						if (page.child_pages.indexOf(child_page._id) !== -1)
+							.col-xs-4.col-sm-3.col-md-2
+								+page_single_small(child_page)
+		.col-sm-12
+			.row
+				if page.content
+					each product in page.products
+						.col-xs-12.col-sm-4.col-md-3
+							= page.content

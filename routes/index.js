@@ -4,6 +4,7 @@
 var _ = require('underscore'),
 	async = require('async'),
 	CategorySchema = require('../schemas/category'),
+	PageSchema = require('../schemas/page'),
 	ProductSchema = require('../schemas/product'),
 	central_render = function(req, res, params) {
 		'use strict';
@@ -65,6 +66,17 @@ exports.search = function(req, res){
 					.exec(cb)
 					;
 			},
+			function(cb){
+				PageSchema.find()
+					.or([
+						{description: {$regex: query, $options: 'i'}},
+						{name: {$regex: query, $options: 'i'}},
+						{slug: {$regex: query, $options: 'i'}}
+					])
+					.sort({slug: 1})
+					.exec(cb)
+					;
+			},
 		], function(err, results){
 			if (err) {
 				console.log(err);
@@ -85,6 +97,7 @@ exports.search = function(req, res){
 					addons: {
 						categories: results[0],
 						products: results[1],
+						pages: results[2],
 					},
 				});
 			} else {

@@ -44,32 +44,33 @@ footer.row
 						a.small(href='/categories/') All Categories
 					li
 						a.small(href='/products/') All Products
-					li.disabled
-						a.small(href='javascript:;') hamburger chicken
-					li.disabled
-						a.small(href='javascript:;') chop drumstick
-					li.disabled
-						a.small(href='javascript:;') pastrami spare
-					li.disabled
-						a.small(href='javascript:;') ribs filet mignon
+					li
+						a.small(href='/pages/') All Pages
+					if site_parts && site_parts.top_pages
+						each page in site_parts.top_pages
+							li
+								a.small(href='/pages/' + page.slug)
+									= page.name
 			.col-xs-12.col-sm-6.col-md-3
 				h4 Tools
 				ul.nav.nav-pills.nav-stacked
+					if site_parts && site_parts.cart && site_parts.cart.total
+						li
+							a.small(href='/cart') Shopping Cart
 					if is_admin
 						li
-							a.small(href='/admin/off') Logout
+							a.small(href='/pages/new') New Page
 						li
 							a.small(href='/categories/new') New Category
 						li
 							a.small(href='/products/new') New Product
+						li.disabled
+							a.small(href='javascript:;') My Account
+						li
+							a.small(href='/admin/off') Logout
 					else
 						li
 							a.small(href='/admin/on') Login
-					li.disabled
-						a.small(href='javascript:;') My Account
-					if site_parts && site_parts.cart && site_parts.cart.total
-						li
-							a.small(href='/cart') Shopping Cart
 	.col-xs-12.col-md-4.text-right
 		.row
 			.col-xs-6

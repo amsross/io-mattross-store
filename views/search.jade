@@ -1,16 +1,25 @@
 include _mixins/category_single_small
+include _mixins/page_single_small
 include _mixins/product_single_small
 extends _layouts/default
 
 block content
 	include home/splash
-	if categories
-		.row
-			each category, index in categories
-				.category.col-xs-4.col-sm-3.col-md-2.margin-bottom
-					mixin category_single_small(category)
 	if products
 		.row
+			h2 Products
 			each product, index in products
 				.product.col-xs-6.col-sm-4.col-md-3.margin-bottom
 					mixin product_single_small(product)
+	if categories
+		.row
+			h2 Categories
+			each category, index in categories
+				.category.col-xs-4.col-sm-3.col-md-2.margin-bottom
+					mixin category_single_small(category)
+	if pages
+		.row
+			h2 Pages
+			each page, index in pages
+				.page.col-xs-4.col-sm-3.col-md-2.margin-bottom
+					mixin page_single_small(page)

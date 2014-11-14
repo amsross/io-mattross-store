@@ -2,7 +2,7 @@
  * Module dependencies
  */
 var _ = require('underscore'),
-	CategorySchema = require('../schemas/category'),
+	PageSchema = require('../schemas/page'),
 	formData = require('form-data'),
 	fs = require('fs'),
 	gm = require('gm'),
@@ -22,14 +22,14 @@ var _ = require('underscore'),
 			title: params.title ? params.title + ' &raquo; ' : ''
 		}, params.addons));
 	},
-	central_upload = function(req, category) {
+	central_upload = function(req, page) {
 		'use strict';
 		if (req.files && req.files.image_full && req.files.image_full.size) {
 
 			var readStream = fs.createReadStream(req.files.image_full.path);
 
 			// create a full size version
-			var writeStream_full = fs.createWriteStream(__dirname + '/' + category._id + '_image_full.' + req.files.image_full.path.split('.').pop());
+			var writeStream_full = fs.createWriteStream(__dirname + '/' + page._id + '_image_full.' + req.files.image_full.path.split('.').pop());
 			writeStream_full.on('finish', function() {
 
 				var that = this,
@@ -42,8 +42,8 @@ var _ = require('underscore'),
 					res.on('data', function(data) {
 						data = JSON.parse(data);
 						if (data.success && data.result && data.result.images && data.result.images.length) {
-							category.set('image_full', (_.first(data.result.images)||{}).direct_link);
-							category.save();
+							page.set('image_full', (_.first(data.result.images)||{}).direct_link);
+							page.save();
 						}
 					});
 					res.on('end', function() {
@@ -72,7 +72,7 @@ var _ = require('underscore'),
 				;
 
 			// create a large version
-			var writeStream_large = fs.createWriteStream(__dirname + '/' + category._id + '_image_large.' + req.files.image_full.path.split('.').pop());
+			var writeStream_large = fs.createWriteStream(__dirname + '/' + page._id + '_image_large.' + req.files.image_full.path.split('.').pop());
 			writeStream_large.on('finish', function() {
 				var that = this,
 					form = new formData();
@@ -84,8 +84,8 @@ var _ = require('underscore'),
 					res.on('data', function(data) {
 						data = JSON.parse(data);
 						if (data.success && data.result && data.result.images && data.result.images.length) {
-							category.set('image_large', (_.first(data.result.images)||{}).direct_link);
-							category.save();
+							page.set('image_large', (_.first(data.result.images)||{}).direct_link);
+							page.save();
 						}
 					});
 					res.on('end', function() {
@@ -115,7 +115,7 @@ var _ = require('underscore'),
 				;
 
 			// create a small version
-			var writeStream_small = fs.createWriteStream(__dirname + '/' + category._id + '_image_small.' + req.files.image_full.path.split('.').pop());
+			var writeStream_small = fs.createWriteStream(__dirname + '/' + page._id + '_image_small.' + req.files.image_full.path.split('.').pop());
 			writeStream_small.on('finish', function() {
 				var that = this,
 					form = new formData();
@@ -127,8 +127,8 @@ var _ = require('underscore'),
 					res.on('data', function(data) {
 						data = JSON.parse(data);
 						if (data.success && data.result && data.result.images && data.result.images.length) {
-							category.set('image_small', (_.first(data.result.images)||{}).direct_link);
-							category.save();
+							page.set('image_small', (_.first(data.result.images)||{}).direct_link);
+							page.save();
 						}
 					});
 					res.on('end', function() {
@@ -160,16 +160,16 @@ var _ = require('underscore'),
 	};
 
 /*
- * NEW category page.
+ * NEW page.
  */
 exports.new = function(req, res){
 	'use strict';
 
-	var category = new CategorySchema();
+	var page = new PageSchema();
 
-	// get all the categories that can be added as child_categories
-	require('../schemas/category').find()
-		.exec(function(err, categories) {
+	// get all the pages that can be added as child_pages
+	require('../schemas/page').find()
+		.exec(function(err, pages) {
 			if (err) {
 				console.log(err);
 				central_render(req, res, {
@@ -182,13 +182,13 @@ exports.new = function(req, res){
 				});
 			} else {
 				central_render(req, res, {
-					body_class: 'categories categories_edit',
-					menu: 'New Category',
-					template: 'categories/edit',
-					title: 'Categories',
+					body_class: 'pages pages_edit',
+					menu: 'New Page',
+					template: 'pages/edit',
+					title: 'Pages',
 					addons: {
-						child_categories: categories,
-						category: category,
+						page: page,
+						child_pages: pages,
 					}
 				});
 			}
@@ -196,7 +196,7 @@ exports.new = function(req, res){
 };
 
 /*
- * GET category page.
+ * GET page.
  */
 exports.get = function(req, res){
 	'use strict';
@@ -205,9 +205,9 @@ exports.get = function(req, res){
 		record;
 
 	if (param_slug) {
-		record = CategorySchema.findOne({'slug': param_slug}).
+		record = PageSchema.findOne({'slug': param_slug}).
 			populate('products')
-			.exec( function (err, category) {
+			.exec( function (err, page) {
 				if (err) {
 					console.log(err);
 					central_render(req, res, {
@@ -218,12 +218,12 @@ exports.get = function(req, res){
 							error: err
 						}
 					});
-				} else if (category) {
+				} else if (page) {
 
-					// get all the products that can be added to this category
-					require('../schemas/product').find()
+					// get all the pages that can be added as child_pages
+					require('../schemas/page').find()
 						.sort({ name: 1 })
-						.exec(function(err, products) {
+						.exec(function(err, child_pages) {
 							if (err) {
 								console.log(err);
 								central_render(req, res, {
@@ -235,34 +235,16 @@ exports.get = function(req, res){
 									}
 								});
 							} else {
-								// get all the categories that can be added as child_categories
-								require('../schemas/category').find()
-									.sort({ name: 1 })
-									.exec(function(err, child_categories) {
-										if (err) {
-											console.log(err);
-											central_render(req, res, {
-												status: 500,
-												template: '500',
-												title: '500',
-												addons: {
-													error: err
-												}
-											});
-										} else {
-											central_render(req, res, {
-												body_class: 'categories categories_edit',
-												menu: category.slug,
-												template: 'categories/edit',
-												title: category.name,
-												addons: {
-													child_categories: child_categories,
-													category: category,
-													products: products
-												}
-											});
-										}
-									});
+								central_render(req, res, {
+									body_class: 'pages pages_edit',
+									menu: page.slug,
+									template: 'pages/edit',
+									title: page.name,
+									addons: {
+										child_pages: child_pages,
+										page: page,
+									}
+								});
 							}
 						});
 				} else {
@@ -278,9 +260,9 @@ exports.get = function(req, res){
 			});
 	} else {
 
-		record = CategorySchema.find()
+		record = PageSchema.find()
 			.sort({ name: 1 })
-			.exec(function(err, categories) {
+			.exec(function(err, pages) {
 				if (err) {
 					console.log(err);
 					central_render(req, res, {
@@ -291,13 +273,13 @@ exports.get = function(req, res){
 							error: err
 						}
 					});
-				} else if (categories) {
+				} else if (pages) {
 					central_render(req, res, {
-						body_class: 'categories categories_get',
-						template: 'categories/get',
-						title: 'Categories',
+						body_class: 'pages pages_get',
+						template: 'pages/get',
+						title: 'Pages',
 						addons: {
-							categories: categories
+							pages: pages
 						}
 					});
 				} else {
@@ -315,27 +297,27 @@ exports.get = function(req, res){
 };
 
 /*
- * POST category page.
+ * POST page.
  */
 exports.post = function(req, res){
 	'use strict';
 
 	var
-		category,
-		param_category = req.param('category')
+		page,
+		param_page = req.param('page')
 		;
 
-	if (param_category) {
+	if (param_page) {
 
-		category = new CategorySchema();
-		category.set('child_categories', param_category.child_categories);
-		category.set('description', param_category.description);
-		category.set('isTopLevel', param_category.isTopLevel);
-		category.set('name', param_category.name);
+		page = new PageSchema();
+		page.set('child_categories', param_page.child_pages);
+		page.set('description', param_page.description);
+		page.set('isTopLevel', param_page.isTopLevel);
+		page.set('name', param_page.name);
 
-		central_upload(req, category);
+		central_upload(req, page);
 
-		category.save(function (err, category) {
+		page.save(function (err, page) {
 			if (err) {
 				console.log(err);
 				central_render(req, res, {
@@ -348,7 +330,7 @@ exports.post = function(req, res){
 				});
 			} else {
 				req.flash('success', 'Resource created');
-				res.redirect('/categories/' + category.slug);
+				res.redirect('/pages/' + page.slug);
 			}
 		});
 	} else {
@@ -364,19 +346,19 @@ exports.post = function(req, res){
 };
 
 /*
- * PUT category page.
+ * PUT page.
  */
 exports.put = function(req, res){
 	'use strict';
 
 	var
-		param_category = req.param('category'),
+		param_page = req.param('page'),
 		param_slug = req.param('slug'),
 		record
 		;
 
-	if (param_category && param_slug) {
-		record = CategorySchema.findOne({'slug': param_slug}, function (err, category) {
+	if (param_page && param_slug) {
+		record = PageSchema.findOne({'slug': param_slug}, function (err, page) {
 			if (err) {
 				console.log(err);
 				central_render(req, res, {
@@ -387,20 +369,20 @@ exports.put = function(req, res){
 						error: err
 					}
 				});
-			} else if (category) {
+			} else if (page) {
 
-				category.set('child_categories', param_category.child_categories);
-				category.set('description', param_category.description);
-				category.set('isTopLevel', param_category.isTopLevel);
-				category.set('name', param_category.name);
+				page.set('child_pages', param_page.child_pages);
+				page.set('description', param_page.description);
+				page.set('isTopLevel', param_page.isTopLevel);
+				page.set('name', param_page.name);
 
-				if (category.child_categories && category.child_categories.indexOf(category._id) !== -1) {
-					category.child_categories.splice(category.child_categories.indexOf(category._id), 1);
+				if (page.child_pages && page.child_pages.indexOf(page._id) !== -1) {
+					page.child_pages.splice(page.child_pages.indexOf(page._id), 1);
 				}
 
-				central_upload(req, category);
+				central_upload(req, page);
 
-				category.save(function (err, category, numberAffected) {
+				page.save(function (err, page, numberAffected) {
 					if (err) {
 						console.log(err);
 						central_render(req, res, {
@@ -414,7 +396,7 @@ exports.put = function(req, res){
 					} else {
 
 						req.flash('success', 'Resource updated');
-						res.redirect('/categories/' + category.slug);
+						res.redirect('/pages/' + page.slug);
 					}
 				});
 			} else {
@@ -442,13 +424,13 @@ exports.put = function(req, res){
 };
 
 /*
- * DELETE category page.
+ * DELETE page.
  */
 exports.delete = function(req, res){
 	'use strict';
 
 	var param_slug = req.param('slug'),
-		record = CategorySchema.findOne({ 'slug': param_slug }, function (err, category) {
+		record = PageSchema.findOne({'slug': param_slug}, function (err, page) {
 			if (err) {
 				console.log(err);
 				central_render(req, res, {
@@ -456,8 +438,8 @@ exports.delete = function(req, res){
 					template: '500',
 					title: '500'
 				});
-			} else if (category) {
-				category.remove(function (err, category) {
+			} else if (page) {
+				page.remove(function (err, page) {
 					if (err) {
 						console.log(err);
 						central_render(req, res, {

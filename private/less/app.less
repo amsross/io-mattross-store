@@ -93,6 +93,32 @@ form.contenteditable {
 	}
 }
 
+.page {
+	.page-name {}
+	.page-image {}
+	&.page--small {
+		.page-name {
+			text-align: center;
+		}
+		.page-image {
+			.thumbnail {
+				margin: 0 auto
+			}
+		}
+	}
+	&.page--large {
+		.page--sortable {
+			.form-control();
+			cursor: default;
+			height: auto;
+			li{
+				cursor: pointer;
+				list-style: none;
+			}
+		}
+	}
+}
+
 footer {
 	margin-top: @navbar-margin-bottom;
 }

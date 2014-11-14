@@ -1,0 +1,9 @@
+extends ../_layouts/default
+
+block content
+	if pages
+		.row
+			each page, index in pages
+				.page.col-xs-6.col-sm-4.col-md-3.margin-bottom
+					include single_small
+

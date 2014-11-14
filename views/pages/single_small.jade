@@ -1,0 +1,8 @@
+if page
+	.page.page--small.well.well-sm
+		p.page-name
+			a(href='/pages/' + page.slug)
+				= page.name
+		p.page-image
+			a(href='/pages/' + page.slug)
+				img.thumbnail.img-responsive(src='//' + page.image_small)

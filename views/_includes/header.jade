@@ -6,18 +6,11 @@ header.row
 		ul.nav.nav-pills.text-right
 			li
 				a.small(href='/') Home
-			li.disabled
-				a.small(href='javascript:;') Blog
-			li.disabled
-				a.small(href='javascript:;') Forums
-			li.disabled
-				a.small(href='javascript:;') FAQ
-			li.disabled
-				a.small(href='javascript:;') News
-			li.disabled
-				a.small(href='javascript:;') About
-			li.disabled
-				a.small(href='javascript:;') Contact
+			if site_parts && site_parts.top_pages
+				each page in site_parts.top_pages
+					li
+						a.small(href='/pages/' + page.slug)
+							= page.name
 			if is_admin
 				li
 					a.small(href='/admin/off') Logout

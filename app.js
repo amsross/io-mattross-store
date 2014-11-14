@@ -7,6 +7,7 @@ module.exports = function (db) {
 	 */
 	var express = require('express'),
 		_ = require('underscore'),
+		async = require('async'),
 		cart = require('./routes/cart'),
 		categories = require('./routes/categories'),
 		CategorySchema = require('./schemas/category'),
@@ -17,6 +18,8 @@ module.exports = function (db) {
 		path = require('path'),
 		products = require('./routes/products'),
 		ProductSchema = require('./schemas/product'),
+		pages = require('./routes/pages'),
+		PageSchema = require('./schemas/page'),
 		routes = require('./routes'),
 		app = express()
 		;
@@ -68,61 +71,65 @@ module.exports = function (db) {
 		app.use(express.static(path.join(__dirname, 'public')));
 	});
 
-	app.locals._ = require('underscore');
+	app.locals._ = _;
 
-	var site_parts = {};
-
-	site_parts.top_categories = function (req, res, next) {
+	function site_parts(req, res, next) {
 		req.site_parts = req.site_parts||{};
 
-		CategorySchema
-			.find({isTopLevel: true})
-			.limit(5)
-			.populate('child_categories')
-			.sort({ name: 1 })
-			.exec(function(err, categories) {
-				if (err) {
-					console.log(err);
-				} else {
-					req.site_parts.top_categories = categories;
+		async.parallel([
+			function(cb){
+				PageSchema
+					.find({isTopLevel: true})
+					.limit(5)
+					.sort({name: 1})
+					.exec(cb);
+			},
+			function(cb){
+				CategorySchema
+					.find({isTopLevel: true})
+					.limit(5)
+					.populate('child_categories')
+					.sort({name: 1})
+					.exec(cb);
+			},
+			function(cb){
+				ProductSchema
+					.find({isFeatured: true})
+					.limit(5)
+					.sort({updated: -1, name: 1})
+					.exec(cb);
+			},
+			function(cb){
+
+				var cart = {
+					items: [],
+					total: 0.00
+				};
+
+				for (var item in req.session.cart) {
+					cart.items.push(item);
+					cart.total += (req.session.cart[item].qty * req.session.cart[item].price);
 				}
-				next();
-			});
-	};
 
-	site_parts.top_products = function (req, res, next) {
-		req.site_parts = req.site_parts||{};
+				cb(null, cart);
+			},
+		], function(err, site_parts){
+			if (err) {
+				console.log(err);
+			} else {
+				req.site_parts = {
+					top_pages: site_parts[0],
+					top_categories: site_parts[1],
+					top_products: site_parts[2],
+					cart: site_parts[3],
+				};
+			}
 
-		ProductSchema
-			.find({isFeatured: true})
-			.limit(5)
-			.sort({ updated: -1, name: 1 })
-			.exec(function(err, products) {
-				if (err) {
-					console.log(err);
-				} else {
-					req.site_parts.top_products = products;
-				}
-				next();
-			});
-	};
+			next();
+		});
+	}
 
-	site_parts.cart = function (req, res, next) {
-		req.site_parts = req.site_parts||{};
-
-		req.site_parts.cart = {
-			items: [],
-			total: 0.00
-		};
-
-		for (var item in req.session.cart) {
-			req.site_parts.cart.items.push(item);
-			req.site_parts.cart.total += (req.session.cart[item].qty * req.session.cart[item].price);
-		}
-		next();
-	};
-
-	app.get('/', site_parts.top_categories, site_parts.top_products, site_parts.cart, routes.index);
+	app.get('/', site_parts, routes.index);
 
 	app.get('/admin/on', function(req, res) {
 		req.session.IS_ADMIN = true;
@@ -132,27 +139,34 @@ module.exports = function (db) {
 		req.session.IS_ADMIN = false;
 		res.redirect(req.headers.referer);
 	});
-	app.get('/search', site_parts.top_categories, site_parts.top_products, site_parts.cart, routes.search);
+	app.get('/search', site_parts, routes.search);
 
-	app.delete('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.delete);
-	app.get('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
-	app.get('/products/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.new);
-	app.get('/products/?:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.get);
-	app.post('/products/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.post);
-	app.put('/products/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, products.put);
+	app.delete('/pages/:slug', site_parts, pages.delete);
+	app.get('/pages/?', site_parts, pages.get);
+	app.get('/pages/new/?', site_parts, pages.new);
+	app.get('/pages/?:slug', site_parts, pages.get);
+	app.post('/pages/?', site_parts, pages.post);
+	app.put('/pages/:slug', site_parts, pages.put);
 
-	app.delete('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.delete);
-	app.get('/categories/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
-	app.get('/categories/new/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.new);
-	app.get('/categories/?:slug?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.get);
-	app.post('/categories/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.post);
-	app.put('/categories/:slug', site_parts.top_categories, site_parts.top_products, site_parts.cart, categories.put);
+	app.delete('/products/:slug', site_parts, products.delete);
+	app.get('/products/?', site_parts, products.get);
+	app.get('/products/new/?', site_parts, products.new);
+	app.get('/products/?:slug', site_parts, products.get);
+	app.post('/products/?', site_parts, products.post);
+	app.put('/products/:slug', site_parts, products.put);
 
-	app.get('/cart/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.get);
-	app.get('/cart/add/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.add);
-	app.get('/cart/remove/?:_id', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.remove);
-	app.get('/cart/pay/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.payGet);
-	app.post('/cart/pay/?', site_parts.top_categories, site_parts.top_products, site_parts.cart, cart.payPost);
+	app.delete('/categories/:slug', site_parts, categories.delete);
+	app.get('/categories/?', site_parts, categories.get);
+	app.get('/categories/new/?', site_parts, categories.new);
+	app.get('/categories/?:slug?', site_parts, categories.get);
+	app.post('/categories/?', site_parts, categories.post);
+	app.put('/categories/:slug', site_parts, categories.put);
+
+	app.get('/cart/?', site_parts, cart.get);
+	app.get('/cart/add/?:_id', site_parts, cart.add);
+	app.get('/cart/remove/?:_id', site_parts, cart.remove);
+	app.get('/cart/pay/?', site_parts, cart.payGet);
+	app.post('/cart/pay/?', site_parts, cart.payPost);
 
 	return app;
 };
