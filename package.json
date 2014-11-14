@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node node_modules/grunt-cli/bin/grunt",
     "test": "node node_modules/grunt-cli/bin/grunt test",
-    "postinstall": "./node_modules/bower/bin/bower install;./node_modules/grunt-cli/bin/grunt"
+    "postinstall": "./node_modules/bower/bin/bower install && ./node_modules/grunt-cli/bin/grunt"
   },
   "engines": {
     "node": "0.10.25"
